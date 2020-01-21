@@ -511,13 +511,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	// 02-shading programs: 
 	// ****TO-DO: 
 	//	-> 2.1b: texturing program initialization
-	/*
+	
 	// texturing program
 	currentDemoProg = demoState->prog_drawTexture;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 3.1a: Lambert shading program initialization
 	/*
