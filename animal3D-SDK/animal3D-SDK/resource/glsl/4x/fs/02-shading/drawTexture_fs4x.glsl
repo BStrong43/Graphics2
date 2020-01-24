@@ -29,7 +29,7 @@
 //	2) declare inbound varying for texture coordinate
 //	3) sample texture using texture coordinate
 //	4) assign sample to output color
-
+uniform sampler2D uImage0;
 out vec4 rtFragColor;
 
 void main()
