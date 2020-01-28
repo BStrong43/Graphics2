@@ -29,9 +29,10 @@
 //	2) assign vertex color to output color
 
 out vec4 rtFragColor;
+in vec4 newColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	rtFragColor = newColor;
 }
