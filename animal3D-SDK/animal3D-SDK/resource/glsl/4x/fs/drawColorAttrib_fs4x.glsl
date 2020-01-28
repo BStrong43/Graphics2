@@ -29,7 +29,7 @@
 //	2) assign vertex color to output color
 
 out vec4 rtFragColor;
-varying in vec4 newColor;
+in vec4 newColor;
 
 void main()
 {

@@ -29,11 +29,14 @@
 //	2) declare inbound varying for texture coordinate
 //	3) sample texture using texture coordinate
 //	4) assign sample to output color
-uniform sampler2D uImage0;
+
+uniform sampler2D uTex_dm;
+
 out vec4 rtFragColor;
+
+in vec4 outTexCoord;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = texture2D(uTex_dm, vec2(outTexCoord));
 }

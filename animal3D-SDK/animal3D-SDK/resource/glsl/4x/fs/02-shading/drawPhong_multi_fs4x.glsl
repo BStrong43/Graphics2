@@ -31,10 +31,31 @@
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
+const int NUM_LIGHTS = 4;
+
+in vec4 outTexCoord;
+in vec4 outNormal;
+in vec4 viewPos;
+
+uniform int uLightCt;
+uniform vec4 uLightPos[NUM_LIGHTS];
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+
 out vec4 rtFragColor;
 
 void main()
 {
+	
+	vec4 texD = texture2D(uTex_dm, outTexCoord.xy);
+	vec4 texS = texture2D(uTex_sm, outTexCoord.xy);
+
+	for(int i = 0; i < uLightCt ; i++)
+	{
+		vec4 lightVec = normalize(uLightPos[i] - viewPos);
+	}
+
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
 	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
 }
