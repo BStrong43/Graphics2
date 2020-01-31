@@ -47,20 +47,6 @@ uniform sampler2D uTex_sm;
 
 out vec4 rtFragColor;
 
-
-vec4 getNormalizedLight(vec4 lightPos, vec4 objPos)
-{
-	vec4 lightVec = lightPos - objPos;
-	return normalize(lightVec);
-}
-
-// Returns the dot product of the passed normal and light vector
-// Make sure to pass normalized values in
-float getDiffuseCoeff(vec4 normal, vec4 lightVector)
-{
-	return max(0.0, dot(normal, lightVector));
-}
-
 void main()
 {
 	
@@ -71,11 +57,11 @@ void main()
 	for (int i = 0; i < uLightCt; ++i)
 	{
 		//Calculate Normals
-		vec4 lightNormal = getNormalizedLight(uLightPos[i], viewPos);
+		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
 		vec4 surfaceNormal = normalize(outNormal);
 
 		//Lighting calculations
-		vec4 reflection = 2.0 * getDiffuseCoeff(surfaceNormal, lightNormal) * surfaceNormal - lightNormal;
+		vec4 reflection = max(0.0, dot(surfaceNormal, lightNormal)) * surfaceNormal - lightNormal;
 		vec4 diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal)) * texD;
 		float specularCoeff = max(0.0, dot(-normalize(viewPos), reflection));
 		vec4 specular = pow(specularCoeff, 128) * texS;
