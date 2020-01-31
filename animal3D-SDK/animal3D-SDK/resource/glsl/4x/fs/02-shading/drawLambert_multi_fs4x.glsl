@@ -46,19 +46,27 @@ in vec4 viewPos;
 
 out vec4 rtFragColor;
 
-
-
 void main()
 {
-	vec4 texture = texture2D(uTex_dm, outTexCoord.xy);
+	vec4 texD = texture(uTex_dm, outTexCoord.xy);
 	
-	vec4 light;
-	for (int i =0; i< uLightCt; i++)
-	{
-		vec4 lightVec = normalize(uLightPos[i] - outNormal);
-		light += dot(texture, lightVec);
+	vec4 outColor;
 
+	for (int i = 0; i < uLightCt; ++i)
+	{
+		//Calculate normals
+		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
+		vec4 surfaceNormal = normalize(outNormal);
+
+		//Lighting calculations
+		float diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal));
+		vec4 lambert = diffuseCoeff * texD;
+
+		//Add lighting and color to fragment
+		outColor += lambert * uLightCol[i];
 	}
-	
-	rtFragColor = clamp(light * texture, 0, 1);
+
+	// Output calculated sum of colors
+	rtFragColor = outColor;
 }
+
