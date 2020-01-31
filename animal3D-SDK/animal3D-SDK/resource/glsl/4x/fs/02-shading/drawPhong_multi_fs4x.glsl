@@ -39,23 +39,50 @@ in vec4 viewPos;
 
 uniform int uLightCt;
 uniform vec4 uLightPos[NUM_LIGHTS];
-
+uniform vec4 uLightCol[NUM_LIGHTS];
+uniform float uLightSz[NUM_LIGHTS];
+uniform float uLightSzInvSq[NUM_LIGHTS];	
 uniform sampler2D uTex_dm;
 uniform sampler2D uTex_sm;
 
 out vec4 rtFragColor;
+
+
+vec4 getNormalizedLight(vec4 lightPos, vec4 objPos)
+{
+	vec4 lightVec = lightPos - objPos;
+	return normalize(lightVec);
+}
+
+// Returns the dot product of the passed normal and light vector
+// Make sure to pass normalized values in
+float getDiffuseCoeff(vec4 normal, vec4 lightVector)
+{
+	return max(0.0, dot(normal, lightVector));
+}
 
 void main()
 {
 	
 	vec4 texD = texture2D(uTex_dm, outTexCoord.xy);
 	vec4 texS = texture2D(uTex_sm, outTexCoord.xy);
+	vec4 outColor;
 
-	for(int i = 0; i < uLightCt ; i++)
+	for (int i = 0; i < uLightCt; ++i)
 	{
-		vec4 lightVec = normalize(uLightPos[i] - viewPos);
+		//Calculate Normals
+		vec4 lightNormal = getNormalizedLight(uLightPos[i], viewPos);
+		vec4 surfaceNormal = normalize(outNormal);
+
+		//Lighting calculations
+		vec4 reflection = 2.0 * getDiffuseCoeff(surfaceNormal, lightNormal) * surfaceNormal - lightNormal;
+		vec4 diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal)) * texD;
+		float specularCoeff = max(0.0, dot(-normalize(viewPos), reflection));
+		vec4 specular = pow(specularCoeff, 128) * texS;
+
+		//add lighting to fragment
+		outColor += (diffuseCoeff + specular) * uLightCol[i];
 	}
 
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	rtFragColor = outColor;
 }
