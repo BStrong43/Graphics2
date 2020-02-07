@@ -51,13 +51,11 @@ void main()
 	vec4 texD = texture(uTex_dm, outTexCoord.xy);
 	
 	vec4 outColor;
-
+	vec4 surfaceNormal = normalize(outNormal);
 	for (int i = 0; i < uLightCt; ++i)
 	{
 		//Calculate normals
 		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
-		vec4 surfaceNormal = normalize(outNormal);
-
 		//Lighting calculations
 		float diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal));
 		vec4 lambert = diffuseCoeff * texD;
