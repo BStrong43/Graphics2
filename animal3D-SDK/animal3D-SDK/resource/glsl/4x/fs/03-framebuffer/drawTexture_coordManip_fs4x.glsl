@@ -33,8 +33,15 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm;
+uniform double uTime;
+in vec4 outTexCoord;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	float x = outTexCoord.x + (sin(float(uTime)) * 3);
+	float y = outTexCoord.x + (cos(float(uTime)) * 3);
+	vec2 texManip = vec2(x,y);
+	vec4 color = texture2D(uTex_dm, texManip);
+	rtFragColor = color;
 }

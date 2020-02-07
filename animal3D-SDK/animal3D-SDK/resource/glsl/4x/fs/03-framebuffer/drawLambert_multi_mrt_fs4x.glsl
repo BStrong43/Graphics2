@@ -37,7 +37,7 @@ const int NUM_LIGHTS = 4;
 
 in vec4 outNormal;
 in vec4 viewPos;
-in vec2 vTexCoord;
+in vec4 outTexCoord;
 
 uniform sampler2D uTex_dm;
 uniform int uLightCt;
@@ -49,14 +49,14 @@ layout (location = 1) out vec4 rtViewPos;
 layout (location = 2) out vec4 rtViewNormal;
 layout (location = 3) out vec4 rtTexCoord;
 layout (location = 4) out vec4 rtDiffuseMap;
-layout (location = 6) out vec4 rtDiffuseLightTotal;
+layout (location = 6) out vec4 rtDiffuseLight;
 
 void main()
 {
 	vec4 outColor;
-	vec4 litTotal;
+	vec4 diffuseLight;
 	vec4 surfaceNormal = normalize(outNormal);
-	vec4 tex = texture(uTex_dm, vTexCoord.xy);
+	vec4 tex = texture(uTex_dm, outTexCoord.xy);
 
 	for (int i = 0; i < uLightCt; ++i)
 	{
@@ -67,15 +67,15 @@ void main()
 
 		vec4 lambert = diffuseCoeff * tex;
 		
-		litTotal += diffuseCoeff;
+		diffuseLight += diffuseCoeff;
 		//Add lighting and color to fragment
 		outColor += lambert * uLightCol[i];
 	}
 
 	rtFragColor = outColor;
-	rtTexCoord = vec4(vTexCoord, 0.0, 0.0);
+	rtTexCoord = outTexCoord;
 	rtViewPos = viewPos;
 	rtViewNormal = surfaceNormal;
 	rtDiffuseMap = tex;
-	rtDiffuseLightTotal = litTotal;
+	rtDiffuseLight = diffuseLight;
 }

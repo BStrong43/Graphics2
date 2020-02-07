@@ -38,5 +38,6 @@ out vec4 rtFragColor;
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE BLUE
+	//lmao
 	rtFragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }

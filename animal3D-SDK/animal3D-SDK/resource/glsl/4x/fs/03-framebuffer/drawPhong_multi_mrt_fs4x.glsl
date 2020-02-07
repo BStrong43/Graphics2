@@ -33,10 +33,60 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
-out vec4 rtFragColor;
+const int NUM_LIGHTS = 4;
+
+in vec4 outTexCoord;
+in vec4 outNormal;
+in vec4 viewPos;
+
+uniform int uLightCt;
+uniform vec4 uLightPos[NUM_LIGHTS];
+uniform vec4 uLightCol[NUM_LIGHTS];
+	
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+
+layout(location = 0) out vec4 rtFragColor;
+layout(location = 1) out vec4 rtViewPos;
+layout(location = 2) out vec4 rtViewNormal;
+layout(location = 3) out vec4 rtTexCoord;
+layout(location = 4) out vec4 rtDiffuseMap;
+layout(location = 5) out vec4 rtSpecularMap;
+layout(location = 6) out vec4 rtDiffuseLight;
+layout(location = 7) out vec4 rtSpecularLight;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	
+	vec4 texD = texture2D(uTex_dm, outTexCoord.xy);
+	vec4 texS = texture2D(uTex_sm, outTexCoord.xy);
+	vec4 surfaceNormal = normalize(outNormal);
+	vec4 outColor;
+	vec4 diffuseLight;
+	vec4 specLight;
+
+	for (int i = 0; i < uLightCt; ++i)
+	{
+		//Calculate Normals
+		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
+		
+		//Lighting calculations
+		vec4 reflection = max(0.0, dot(surfaceNormal, lightNormal)) * surfaceNormal - lightNormal;
+		vec4 diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal)) * texD;
+		vec4 specularCoeff = pow(max(0.0, dot(-normalize(viewPos), reflection)), 128) * texS;
+
+		//add lighting to fragment
+		outColor += (diffuseCoeff + specularCoeff) * uLightCol[i];
+		diffuseLight += diffuseCoeff;
+		specLight += specularCoeff;
+	}
+
+	rtFragColor = outColor;
+	rtTexCoord = outTexCoord;
+	rtViewPos = viewPos;
+	rtViewNormal = surfaceNormal;
+	rtDiffuseMap = texD;
+	rtDiffuseLight = diffuseLight;
+	rtSpecularMap = texS;
+	rtSpecularLight = specLight;
 }

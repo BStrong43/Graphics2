@@ -35,7 +35,7 @@
 in vec4 viewPos;
 in vec4 outNormal;
 
-in vec2 outTexCoord;
+in vec4 outTexCoord;
 uniform sampler2D uTex_dm;
 
 //Outward Render Target Attributes
@@ -49,11 +49,11 @@ void main()
 {
 
 	//lab2\
-	vec4 tex = texture(uTex_dm, outTexCoord);
+	vec4 tex = texture(uTex_dm, outTexCoord.xy);
 	rtFragColor = tex;
 	
 	//lab 3
-	rtTexCoord = vec4(outTexCoord.xy, 0.0, 0.0);
+	rtTexCoord = outTexCoord;
 	rtViewPos = viewPos;
 	rtViewNormal = normalize(outNormal);
 	rtDiffuseMap = tex;
