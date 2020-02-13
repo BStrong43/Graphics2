@@ -110,6 +110,38 @@ inline void a3demo_initDummyDrawable_internal(a3_DemoState *demoState)
 
 
 //-----------------------------------------------------------------------------
+// uniform helpers
+
+#define a3demo_getUniformLocation(demoProgram, handleName, getLocFunc) (demoProgram->handleName = getLocFunc(demoProgram->program, #handleName))
+#define a3demo_getUniformLocationValid(demoProgram, handleName, getLocFunc) if (a3demo_getUniformLocation(demoProgram, handleName, getLocFunc) >= 0)
+#define a3demo_setUniformDefault(demoProgram, handleName, sendFunc, type, value) \
+	a3demo_getUniformLocationValid(demoProgram, handleName, a3shaderUniformGetLocation) \
+		sendFunc(type, demoProgram->handleName, 1, value)
+#define a3demo_setUniformDefaultMat(demoProgram, handleName, sendFunc, type, value) \
+	a3demo_getUniformLocationValid(demoProgram, handleName, a3shaderUniformGetLocation) \
+		sendFunc(type, 0, demoProgram->handleName, 1, value)
+#define a3demo_setUniformDefaultBlock(demoProgram, handleName, value) \
+	a3demo_getUniformLocationValid(demoProgram, handleName, a3shaderUniformBlockGetLocation) \
+		a3shaderUniformBlockBind(demoProgram->program, demoProgram->handleName, value)
+
+#define a3demo_setUniformDefaultFloat(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendFloat, a3unif_single, value)
+#define a3demo_setUniformDefaultVec2(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendFloat, a3unif_vec2, value)
+#define a3demo_setUniformDefaultVec3(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendFloat, a3unif_vec3, value)
+#define a3demo_setUniformDefaultVec4(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendFloat, a3unif_vec4, value)
+#define a3demo_setUniformDefaultDouble(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendDouble, a3unif_single, value)
+#define a3demo_setUniformDefaultDVec2(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendDouble, a3unif_vec2, value)
+#define a3demo_setUniformDefaultDVec3(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendDouble, a3unif_vec3, value)
+#define a3demo_setUniformDefaultDVec4(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendDouble, a3unif_vec4, value)
+#define a3demo_setUniformDefaultInteger(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendInt, a3unif_single, value)
+#define a3demo_setUniformDefaultIVec2(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendInt, a3unif_vec2, value)
+#define a3demo_setUniformDefaultIVec3(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendInt, a3unif_vec3, value)
+#define a3demo_setUniformDefaultIVec4(demoProgram, handleName, value) a3demo_setUniformDefault(demoProgram, handleName, a3shaderUniformSendInt, a3unif_vec4, value)
+#define a3demo_setUniformDefaultMat2(demoProgram, handleName) a3demo_setUniformDefaultMat(demoProgram, handleName, a3shaderUniformSendFloatMat, a3unif_mat2, a3mat2_identity.mm)
+#define a3demo_setUniformDefaultMat3(demoProgram, handleName) a3demo_setUniformDefaultMat(demoProgram, handleName, a3shaderUniformSendFloatMat, a3unif_mat3, a3mat3_identity.mm)
+#define a3demo_setUniformDefaultMat4(demoProgram, handleName) a3demo_setUniformDefaultMat(demoProgram, handleName, a3shaderUniformSendFloatMat, a3unif_mat4, a3mat4_identity.mm)
+
+
+//-----------------------------------------------------------------------------
 // LOADING
 
 // utility to load geometry
@@ -351,55 +383,17 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 {
 	// direct to demo programs
 	a3_DemoStateShaderProgram *currentDemoProg;
-	a3i32 *currentUnif, uLocation, flag;
-	a3ui32 i, j;
+	a3i32 flag;
+	a3ui32 i;
 
 	// maximum uniform buffer size
 	const a3ui32 uBlockSzMax = a3shaderUniformBlockMaxSize();
 
-	// list of uniform names: align with uniform list in demo struct!
-	const a3byte *uniformNames[demoStateMaxCount_shaderProgramUniform] = {
-		// common vertex
-		"uMVP",
-		"uMV",
-		"uP",
-		"uP_inv",
-		"uMV_nrm",
-		"uAtlas",
-
-		// common fragment
-		"uLightCt",
-		"uLightSz",
-		"uLightSzInvSq",
-		"uLightPos",
-		"uLightCol",
-		"uColor",
-
-		// common texture
-		"uTex_dm", "uTex_sm",
-		"uTex_dm_ramp", "uTex_sm_ramp",
-		"uImage0",
-
-		// common general
-		"uTime",
-	};
-
-	// list of uniform block names: align with uniform block list in demo struct!
-	const a3byte *uniformBlockNames[demoStateMaxCount_shaderProgramUniformBlock] = {
-		// transformation uniform blocks
-		"ubTransformMVP",
-
-		// lighting uniform blocks
-		"ubPointLight",
-	};
-
-
 	// some default uniform values
-	const a3f32 defaultColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const a3f32 defaultFloat[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	const a3f64 defaultDouble[] = { 0.0, 0.0, 0.0, 1.0 };
+	const a3i32 defaultInt[] = { 0, 0, 0, 1 };
 	const a3i32 defaultTexUnits[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-	const a3f64 defaultDouble[] = { 0.0 };
-	const a3f32 defaultFloat[] = { 0.0f };
-	const a3i32 defaultInt[] = { 0 };
 
 
 	// list of all unique shaders
@@ -419,6 +413,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passTexcoord_transform_vs[1],
 				passLightingData_transform_vs[1];
+			// 04-multipass
+			a3_DemoStateShader
+				passLightingData_shadowCoord_transform_vs[1];
 
 			// fragment shaders
 			// base
@@ -439,6 +436,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawLambert_multi_mrt_fs[1],
 				drawPhong_multi_mrt_fs[1],
 				drawNonphoto_multi_mrt_fs[1];
+			// 04-multipass
+			a3_DemoStateShader
+				drawTexture_outline_fs[1],
+				drawPhong_multi_shadow_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -454,8 +455,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_instanced_vs4x.glsl" } } },
 			// 02-shading
-			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/passTexcoord_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/passLightingData_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passTexcoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
+			// 04-multipass
+			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/e/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
 
 			// fs
 			// base
@@ -467,12 +470,15 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawPhong_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawNonphoto_multi_fs4x.glsl" } } },
 			// 03-framebuffer
-			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_colorManip_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_coordManip_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawLambert_multi_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawPhong_multi_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawNonphoto_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_colorManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_coordManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawLambert_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawPhong_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawNonphoto_multi_mrt_fs4x.glsl" } } },
+			// 04-multipass
+			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawTexture_outline_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -585,6 +591,18 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_coordManip_fs->shader);
 
+	// 04-multipass programs: 
+	// Phong shading with shadow mapping and MRT
+	currentDemoProg = demoState->prog_drawPhong_multi_shadow_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-shadow");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_shadowCoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_shadow_mrt_fs->shader);
+	// texturing program with outlines
+	currentDemoProg = demoState->prog_drawTexture_outline;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-outline");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_outline_fs->shader);
+
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -613,76 +631,66 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	}
 
 
+	// ****TO-DO: 
+	//	-> 2.1: LOOK HERE
+	//	-> 3.1: LOOK HERE
+	//	-> 4.1: LOOK HERE
 	// prepare uniforms algorithmically instead of manually for all programs
+	// get uniform and uniform block locations and set default values for all 
+	//	programs that have a uniform that will either never change or is
+	//	consistent for all programs
 	for (i = 0; i < demoStateMaxCount_shaderProgram; ++i)
 	{
 		// activate program
 		currentDemoProg = demoState->shaderProgram + i;
 		a3shaderProgramActivate(currentDemoProg->program);
 
-		// get uniform and uniform block locations
-		currentUnif = currentDemoProg->uniformLocation;
-		for (j = 0; j < demoStateMaxCount_shaderProgramUniform; ++j)
-			currentUnif[j] = a3shaderUniformGetLocation(currentDemoProg->program, uniformNames[j]);
-		currentUnif = currentDemoProg->uniformBlockLocation;
-		for (j = 0; j < demoStateMaxCount_shaderProgramUniformBlock; ++j)
-			currentUnif[j] = a3shaderUniformBlockGetLocation(currentDemoProg->program, uniformBlockNames[j]);
-
-
-		// set default values for all programs that have a uniform that will 
-		//	either never change or is consistent for all programs
-
 		// common VS
-		if ((uLocation = currentDemoProg->uMVP) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-		if ((uLocation = currentDemoProg->uMV) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-		if ((uLocation = currentDemoProg->uP) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-		if ((uLocation = currentDemoProg->uP_inv) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-		if ((uLocation = currentDemoProg->uMV_nrm) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-		if ((uLocation = currentDemoProg->uAtlas) >= 0)
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, uLocation, 1, a3mat4_identity.mm);
-
+		a3demo_setUniformDefaultMat4(currentDemoProg, uMVP);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uMV);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uP);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uP_inv);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uMV_nrm);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB_other);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uAtlas);
+		
 		// common FS
-		if ((uLocation = currentDemoProg->uLightCt) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultInt);
-		if ((uLocation = currentDemoProg->uLightSz) >= 0)
-			a3shaderUniformSendFloat(a3unif_single, uLocation, 1, defaultFloat);
-		if ((uLocation = currentDemoProg->uLightSzInvSq) >= 0)
-			a3shaderUniformSendFloat(a3unif_single, uLocation, 1, defaultFloat);
-		if ((uLocation = currentDemoProg->uLightPos) >= 0)
-			a3shaderUniformSendFloat(a3unif_vec4, uLocation, 1, a3vec4_w.v);
-		if ((uLocation = currentDemoProg->uLightCol) >= 0)
-			a3shaderUniformSendFloat(a3unif_vec4, uLocation, 1, defaultColor);
-		if ((uLocation = currentDemoProg->uColor) >= 0)
-			a3shaderUniformSendFloat(a3unif_vec4, uLocation, 1, defaultColor);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uLightCt, defaultInt);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightSz, defaultFloat);
+		a3demo_setUniformDefaultFloat(currentDemoProg, uLightSzInvSq, defaultFloat);
+		a3demo_setUniformDefaultVec4(currentDemoProg, uLightPos, a3vec4_w.v);
+		a3demo_setUniformDefaultVec4(currentDemoProg, uLightCol, a3vec4_one.v);
+		a3demo_setUniformDefaultVec4(currentDemoProg, uColor, a3vec4_one.v);
 
 		// common texture
-		if ((uLocation = currentDemoProg->uTex_dm) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultTexUnits + 0);
-		if ((uLocation = currentDemoProg->uTex_sm) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultTexUnits + 1);
-		if ((uLocation = currentDemoProg->uTex_dm_ramp) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultTexUnits + 4);
-		if ((uLocation = currentDemoProg->uTex_sm_ramp) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultTexUnits + 5);
-		if ((uLocation = currentDemoProg->uImage0) >= 0)
-			a3shaderUniformSendInt(a3unif_single, uLocation, 1, defaultTexUnits + 0);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_dm, defaultTexUnits + 0);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_sm, defaultTexUnits + 1);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_nm, defaultTexUnits + 2);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_hm, defaultTexUnits + 3);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_dm_ramp, defaultTexUnits + 4);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_sm_ramp, defaultTexUnits + 5);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_shadow, defaultTexUnits + 6);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_proj, defaultTexUnits + 7);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage0, defaultTexUnits + 0);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage1, defaultTexUnits + 1);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage2, defaultTexUnits + 2);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage3, defaultTexUnits + 3);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage4, defaultTexUnits + 4);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage5, defaultTexUnits + 5);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage6, defaultTexUnits + 6);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage7, defaultTexUnits + 7);
 
 		// common general
-		if ((uLocation = currentDemoProg->uTime) >= 0)
-			a3shaderUniformSendDouble(a3unif_single, uLocation, 1, defaultDouble);
+		a3demo_setUniformDefaultDouble(currentDemoProg, uAxis, defaultDouble);
+		a3demo_setUniformDefaultDouble(currentDemoProg, uSize, defaultDouble);
+		a3demo_setUniformDefaultDouble(currentDemoProg, uTime, defaultDouble);
 
 		// transformation uniform blocks
-		if ((uLocation = currentDemoProg->ubTransformMVP) >= 0)
-			a3shaderUniformBlockBind(currentDemoProg->program, uLocation, 0);
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVP, 0);
 
 		// lighting uniform blocks
-		if ((uLocation = currentDemoProg->ubPointLight) >= 0)
-			a3shaderUniformBlockBind(currentDemoProg->program, uLocation, 0);
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubPointLight, 4);
 	}
 
 
@@ -775,28 +783,42 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 }
 
 
+// ****TO-DO: 
+//	-> 2.1: LOOK HERE
 // utility to load framebuffers
 void a3demo_loadFramebuffers(a3_DemoState* demoState)
 {
+	// create framebuffers and change their texture settings if need be
+	a3_Framebuffer* fbo;
+	a3ui32 i, j;
+
 	// storage precision and targets
 	const a3_FramebufferColorType colorType_scene = a3fbo_colorRGBA16;
 	const a3_FramebufferDepthType depthType_scene = a3fbo_depth24_stencil8;
 	const a3ui32 targets_scene = 8;
 
-	// ****TO-DO: 
-	//	-> 2.1c: framebuffer initialization
-	
-	// create framebuffers and change their texture settings if need be
-	a3_Framebuffer* fbo;
-	a3ui32 i, j;
+	const a3_FramebufferDepthType depthType_shadow = a3fbo_depth32;
+	const a3ui16 shadowMapSz = 2048;
+
+	const a3_FramebufferColorType colorType_composite = a3fbo_colorRGBA8;
+	const a3ui32 targets_composite = 1;
 
 
 	// initialize framebuffers: 
-	//	- scene, with or without MRT (determine your needs), add depth
-	//	- shadow map, depth only
-	fbo = demoState->fbo_scene;
+	//	-> scene, with or without MRT (determine your needs), add depth
+	fbo = demoState->fbo_scene_c16d24s8_mrt;
 	a3framebufferCreate(fbo, "fbo:scene",
 		targets_scene, colorType_scene, depthType_scene,
+		demoState->frameWidth, demoState->frameHeight);
+	//	-> shadow map, depth only
+	fbo = demoState->fbo_shadow_d32;
+	a3framebufferCreate(fbo, "fbo:shadow",
+		0, a3fbo_colorDisable, depthType_shadow,
+		shadowMapSz, shadowMapSz);
+	//	-> compositing, color only
+	fbo = demoState->fbo_composite_c16;
+	a3framebufferCreate(fbo, "fbo:composite",
+		targets_composite, colorType_composite, a3fbo_depthDisable,
 		demoState->frameWidth, demoState->frameHeight);
 
 
@@ -821,7 +843,6 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 			a3textureChangeFilterMode(a3tex_filterLinear);
 		}
 	}
-	
 
 
 	// deactivate texture
@@ -846,9 +867,6 @@ inline void a3_refreshDrawable_internal(a3_VertexDrawable *drawable, a3_VertexAr
 //	...or just set new function pointers!
 void a3demo_refresh(a3_DemoState *demoState)
 {
-	// ****TO-DO: 
-	//	-> 2.1d: uncomment framebuffer refresh
-
 	a3_BufferObject *currentBuff = demoState->drawDataBuffer,
 		*const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;
 	a3_VertexArrayDescriptor *currentVAO = demoState->vertexArray,

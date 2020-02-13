@@ -32,11 +32,14 @@
 
 #include "../a3_DemoState.h"
 
+#include "../_a3_demo_utilities/a3_DemoMacros.h"
+
 
 //-----------------------------------------------------------------------------
 // INPUT SUB-ROUTINES
 
-void a3demo_input_main(a3_DemoState *demoState, a3f64 dt)
+// main input processing for scene
+void a3demo_input_scene(a3_DemoState *demoState, a3f64 dt)
 {
 	a3real ctrlRotateSpeed = 1.0f;
 	a3real azimuth = 0.0f;
@@ -112,11 +115,80 @@ void a3demo_input_main(a3_DemoState *demoState, a3f64 dt)
 
 void a3demo_input(a3_DemoState *demoState, a3f64 dt)
 {
+	// shared input processing for scene
+	a3demo_input_scene(demoState, dt);
+
+	// input processing based on mode
 	switch (demoState->demoMode)
 	{
-		// main render pipeline
-	case demoStateMode_main:
-		a3demo_input_main(demoState, dt);
+	case demoState_shading:
+		demoState->activeCamera = demoState->demoMode_shading->activeCamera;
+		break;
+	case demoState_pipelines:
+		demoState->activeCamera = demoState->demoMode_pipelines->activeCamera;
+		break;
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// CALLBACKS
+
+// demo mode callbacks
+void a3shadingCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Shading* demoMode, a3i32 asciiKey);
+void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode, a3i32 asciiKey);
+
+// ascii key callback
+void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
+{
+	switch (asciiKey)
+	{
+		// change pipeline mode
+		a3demoCtrlCasesLoop(demoState->demoMode, demoState_mode_max, '>', '<');
+		a3demoCtrlCasesLoop(demoState->demoMode, demoState_mode_max, '.', ',');
+
+
+		// increase/decrease light count
+		a3demoCtrlCasesCap(demoState->forwardLightCount, demoStateMaxCount_lightObject, 0, 'L', 'l');
+
+
+		// toggle grid
+		a3demoCtrlCaseToggle(demoState->displayGrid, 'g');
+
+		// toggle skybox
+		a3demoCtrlCaseToggle(demoState->displaySkybox, 'b');
+
+		// toggle hidden volumes
+		a3demoCtrlCaseToggle(demoState->displayHiddenVolumes, 'h');
+
+		// toggle pipeline overlay
+		a3demoCtrlCaseToggle(demoState->displayPipeline, 'o');
+
+		// toggle world axes
+		a3demoCtrlCaseToggle(demoState->displayWorldAxes, 'x');
+
+		// toggle object axes
+		a3demoCtrlCaseToggle(demoState->displayObjectAxes, 'z');
+
+		// toggle tangent bases on vertices or other
+		a3demoCtrlCaseToggle(demoState->displayTangentBases, 'B');
+
+		// update animation
+		a3demoCtrlCaseToggle(demoState->updateAnimation, 'm');
+
+		// toggle stencil test
+		a3demoCtrlCaseToggle(demoState->stencilTest, 'i');
+	}
+
+
+	// callback for current mode
+	switch (demoState->demoMode)
+	{
+	case demoState_shading:
+		a3shadingCB_input_keyCharPress(demoState, demoState->demoMode_shading, asciiKey);
+		break;
+	case demoState_pipelines:
+		a3pipelinesCB_input_keyCharPress(demoState, demoState->demoMode_pipelines, asciiKey);
 		break;
 	}
 }

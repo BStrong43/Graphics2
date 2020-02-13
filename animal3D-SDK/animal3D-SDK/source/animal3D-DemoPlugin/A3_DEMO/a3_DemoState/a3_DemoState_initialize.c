@@ -34,13 +34,25 @@
 
 
 //-----------------------------------------------------------------------------
+
+void a3demo_initScene(a3_DemoState* demoState);
+void a3demo_initSceneRefresh(a3_DemoState* demoState);
+
+
+//-----------------------------------------------------------------------------
+
+void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode);
+void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode);
+
+
+//-----------------------------------------------------------------------------
 // INITIALIZE
 
 // initialize non-asset objects
 void a3demo_initScene(a3_DemoState *demoState)
 {
-	a3ui32 i, j;
-	a3_DemoProjector* camera;
+	a3ui32 i;
+	a3_DemoProjector* projector;
 	a3_DemoPointLight* pointLight;
 
 	// camera's starting orientation depends on "vertical" axis
@@ -70,21 +82,30 @@ void a3demo_initScene(a3_DemoState *demoState)
 
 	// cameras
 	a3demo_initProjector(demoState->sceneCamera);
-
-	// camera params
-	demoState->activeCamera = 0;
+	a3demo_initProjector(demoState->shadowLight);
 
 	// scene cameras
-	camera = demoState->sceneCamera + 0;
-	camera->perspective = a3true;
-	camera->fovy = a3real_fortyfive;
-	camera->znear = 1.0f;
-	camera->zfar = 1000.0f;
-	camera->ctrlMoveSpeed = 10.0f;
-	camera->ctrlRotateSpeed = 5.0f;
-	camera->ctrlZoomSpeed = 5.0f;
-	camera->sceneObject->position = sceneCameraStartPos;
-	camera->sceneObject->euler = sceneCameraStartEuler;
+	projector = demoState->sceneCamera + 0;
+	projector->perspective = a3true;
+	projector->fovy = a3real_fortyfive;
+	projector->znear = 1.0f;
+	projector->zfar = 1000.0f;
+	projector->ctrlMoveSpeed = 10.0f;
+	projector->ctrlRotateSpeed = 5.0f;
+	projector->ctrlZoomSpeed = 5.0f;
+	projector->sceneObject->position = sceneCameraStartPos;
+	projector->sceneObject->euler = sceneCameraStartEuler;
+
+	// additional cameras
+	projector = demoState->shadowLight + 0;
+	projector->fovy = a3real_fortyfive;
+	projector->znear = 10.0f;
+	projector->zfar = 100.0f;
+	projector->ctrlMoveSpeed = 10.0f;
+	projector->ctrlRotateSpeed = 5.0f;
+	projector->ctrlZoomSpeed = 5.0f;
+	projector->sceneObject->position = sceneCameraStartPos;
+	projector->sceneObject->euler = sceneCameraStartEuler;
 
 
 	// init transforms
@@ -98,52 +119,16 @@ void a3demo_initScene(a3_DemoState *demoState)
 	}
 
 
-	// demo modes
-	demoState->demoModeCount = 1;
-	demoState->demoMode = 0;
-
-	// demo mode A: forward lighting demo
-	//	1) shading
-	//		a) color buffer
-	//	2) shading with MRT
-	//		a) color target 0: composite color
-	//		b) color target 1: position attribute
-	//		c) color target 2: normal attribute
-	//		d) color target 3: texcoord attribute
-	//		e) color target 4: diffuse texture sample
-	//		f) color target 5: specular texture sample
-	//		g) color target 6: diffuse shading
-	//		h) color target 7: specular shading
-	//		i) depth buffer
-	for (i = 0; i < demoStateMaxModes; ++i)
-		for (j = 0, demoState->demoSubModeCount[i] = 1;
-			j < demoStateMaxSubModes;
-			++j)
-			demoState->demoOutputCount[i][j] = 1;
-	demoState->demoSubModeCount[demoStateMode_main] = demoStateMaxSubModes;
-	demoState->demoOutputCount[demoStateMode_main][demoStateSubMode_main_mrt] = demoStateMaxOutputModes;
-
-
 	// initialize other objects and settings
-	demoState->displayGrid = 1;
-	demoState->displayWorldAxes = 1;
-	demoState->displayObjectAxes = 1;
-	demoState->displayTangentBases = 0;
-	demoState->displaySkybox = 1;
-	demoState->displayHiddenVolumes = 1;
-	demoState->displayPipeline = 0;
-	demoState->updateAnimation = 1;
-	demoState->stencilTest = 0;
-
-
-	// shading mode
-	demoState->lightingPipelineMode = demoStatePipelineMode_forward;
-	demoState->forwardShadingMode = demoStateForwardShadingMode_solid;
-	demoState->forwardShadingModeCount = demoStateForwardShadingModeMax;
-
-	// display mode
-	demoState->forwardDisplayMode = demoStateForwardDisplayMode_texture;
-	demoState->forwardDisplayModeCount = demoStateForwardDisplayModeMax;
+	demoState->displayGrid = a3true;
+	demoState->displayWorldAxes = a3true;
+	demoState->displayObjectAxes = a3true;
+	demoState->displayTangentBases = a3false;
+	demoState->displaySkybox = a3true;
+	demoState->displayHiddenVolumes = a3true;
+	demoState->displayPipeline = a3false;
+	demoState->updateAnimation = a3true;
+	demoState->stencilTest = a3false;
 
 
 	// lights
@@ -223,12 +208,22 @@ void a3demo_initScene(a3_DemoState *demoState)
 		demoState->cylinderObject->position.y = +6.0f;
 		demoState->teapotObject->position.y = -6.0f;
 	}
+
+
+	// demo modes
+	a3shading_init(demoState, demoState->demoMode_shading);
+	a3pipelines_init(demoState, demoState->demoMode_pipelines);
+	demoState->demoMode = demoState_pipelines;
+
+	// active camera params
+	demoState->activeCamera = demoState->demoMode_pipelines->activeCamera;
 }
 
 // refresh non-asset scene objects (e.g. re-link pointers)
 void a3demo_initSceneRefresh(a3_DemoState *demoState)
 {
 	a3demo_setProjectorSceneObject(demoState->sceneCamera, demoState->mainCameraObject);
+	a3demo_setProjectorSceneObject(demoState->shadowLight, demoState->mainLightObject);
 }
 
 

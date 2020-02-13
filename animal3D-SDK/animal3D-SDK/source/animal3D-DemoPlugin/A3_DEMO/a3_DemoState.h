@@ -40,8 +40,11 @@
 //-----------------------------------------------------------------------------
 // other demo includes
 
-#include "_utilities/a3_DemoSceneObject.h"
-#include "_utilities/a3_DemoShaderProgram.h"
+#include "_a3_demo_utilities/a3_DemoSceneObject.h"
+#include "_a3_demo_utilities/a3_DemoShaderProgram.h"
+
+#include "a3_Demo_Shading.h"
+#include "a3_Demo_Pipelines.h"
 
 
 //-----------------------------------------------------------------------------
@@ -51,21 +54,45 @@ extern "C"
 {
 #else	// !__cplusplus
 	typedef struct a3_DemoState					a3_DemoState;
+	typedef enum a3_DemoState_ModeName			a3_DemoState_ModeName;
+	typedef enum a3_DemoState_TextDisplayName	a3_DemoState_TextDisplayName;
 #endif	// __cplusplus
 
 
 //-----------------------------------------------------------------------------
 
+	// demo mode names
+	enum a3_DemoState_ModeName
+	{
+		demoState_shading,				// basic shading mode
+		demoState_pipelines,			// different pipelines for exploration
+
+		demoState_mode_max
+	};
+
+
+	// text mode names
+	enum a3_DemoState_TextDisplayName
+	{
+		demoState_textDisabled,			// no text overlay
+		demoState_textControls,			// display controls
+		demoState_textControls_gen,		// display general controls
+		demoState_textData,				// display data
+
+		demoState_text_max
+	};
+
+
 	// object maximum counts for easy array storage
 	// good idea to make these numbers greater than what you actually need 
 	//	and if you end up needing more just increase the count... there's 
 	//	more than enough memory to hold extra objects
-	enum a3_DemoStateObjectMaxCounts
+	enum a3_DemoState_ObjectMaxCount
 	{
 		demoStateMaxCount_sceneObject = 8,
 		demoStateMaxCount_cameraObject = 1,
 		demoStateMaxCount_lightObject = 4,
-		demoStateMaxCount_projector = 1,
+		demoStateMaxCount_projector = 2,
 
 		demoStateMaxCount_timer = 1,
 
@@ -77,73 +104,7 @@ extern "C"
 		
 		demoStateMaxCount_texture = 16,
 
-		demoStateMaxCount_framebuffer = 1,
-	};
-
-	// additional counters for demo modes
-	enum a3_DemoStateModeCounts
-	{
-		demoStateMaxModes = 1,
-		demoStateMaxSubModes = 2,
-		demoStateMaxOutputModes = 9,
-	};
-
-	// demo mode names
-	enum a3_DemoStateModeNames
-	{
-		demoStateMode_main,
-	};
-
-	// demo sub-mode names
-	enum a3_DemoStateSubModeNames_main
-	{
-		demoStateSubMode_main_shading,
-		demoStateSubMode_main_mrt,
-	};
-
-	// demo output mode names
-	enum a3_DemoStateOutputNames_main_mrt
-	{
-		demoStateOutput_main_mrt_composite,
-		demoStateOutput_main_mrt_position,
-		demoStateOutput_main_mrt_normal,
-		demoStateOutput_main_mrt_texcoord,
-		demoStateOutput_main_mrt_diffuseTex,
-		demoStateOutput_main_mrt_specularTex,
-		demoStateOutput_main_mrt_diffuseLight,
-		demoStateOutput_main_mrt_specularLight,
-		demoStateOutput_main_mrt_fragdepth,
-	};
-
-
-//-----------------------------------------------------------------------------
-
-	// pipeline modes
-	enum a3_DemoStatePipelineModeNames
-	{
-		demoStatePipelineMode_forward,
-	};
-
-	// forward shading modes
-	enum a3_DemoStateForwardShadingModeNames
-	{
-		demoStateForwardShadingMode_solid,
-		demoStateForwardShadingMode_texture,
-		demoStateForwardShadingMode_Lambert,
-		demoStateForwardShadingMode_Phong,
-		demoStateForwardShadingMode_nonphoto,
-
-		demoStateForwardShadingModeMax
-	};
-
-	// display modes
-	enum a3_DemoStateForwardDisplayModeNames
-	{
-		demoStateForwardDisplayMode_texture,
-		demoStateForwardDisplayMode_texture_colorManip,
-		demoStateForwardDisplayMode_texture_texcoordManip,
-
-		demoStateForwardDisplayModeMax
+		demoStateMaxCount_framebuffer = 4,
 	};
 
 	
@@ -162,7 +123,7 @@ extern "C"
 		a3i32 verticalAxis;
 
 		// asset streaming between loads enabled (careful!)
-		a3i32 streaming;
+		a3boolean streaming;
 
 		// window and full-frame dimensions
 		a3ui32 windowWidth, windowHeight;
@@ -176,7 +137,8 @@ extern "C"
 		// objects that have known or fixed instance count in the whole demo
 
 		// text renderer
-		a3i32 textInit, textMode, textModeCount;
+		a3boolean textInit;
+		a3_DemoState_TextDisplayName textMode;
 		a3_TextRenderer text[1];
 
 		// input
@@ -191,16 +153,17 @@ extern "C"
 		//---------------------------------------------------------------------
 		// scene variables and objects
 
-		// demo mode array: 
-		//	- mode: which mode/pipeline is being viewed
-		//	- sub-mode: which sub-mode/pass in the pipeline is being viewed
-		//	- output: which output from the sub-mode/pass is being viewed
-		a3ui32 demoMode, demoSubMode[demoStateMaxModes], demoOutputMode[demoStateMaxModes][demoStateMaxSubModes];
-		a3ui32 demoModeCount, demoSubModeCount[demoStateMaxModes], demoOutputCount[demoStateMaxModes][demoStateMaxSubModes];
+		// demo modes
+		a3_Demo_Shading demoMode_shading[1];
+		a3_Demo_Pipelines demoMode_pipelines[1];
+		a3_DemoState_ModeName demoMode;
+
+		// cameras
+		a3ui32 activeCamera;
 
 		// toggle grid in scene and axes superimposed, as well as other mods
-		a3boolean displayGrid, displayWorldAxes, displayObjectAxes, displayTangentBases;
-		a3boolean displaySkybox, displayHiddenVolumes, displayPipeline;
+		a3boolean displayGrid, displaySkybox, displayHiddenVolumes, displayPipeline;
+		a3boolean displayWorldAxes, displayObjectAxes, displayTangentBases;
 		a3boolean updateAnimation;
 		a3boolean stencilTest;
 
@@ -208,17 +171,9 @@ extern "C"
 		a3mat4 gridTransform;
 		a3vec4 gridColor;
 
-		// cameras
-		a3ui32 activeCamera;
-
 		// lights
-		a3ui32 lightingPipelineMode;
-		a3ui32 forwardShadingMode, forwardShadingModeCount;
 		a3ui32 forwardLightCount;
 		a3_DemoPointLight forwardPointLight[demoStateMaxCount_lightObject];
-
-		// display modes
-		a3ui32 forwardDisplayMode, forwardDisplayModeCount;
 
 
 		//---------------------------------------------------------------------
@@ -263,6 +218,8 @@ extern "C"
 			struct {
 				a3_DemoProjector
 					sceneCamera[1];						// scene viewing cameras
+				a3_DemoProjector
+					shadowLight[1];						// light for capturing shadow map
 			};
 		};
 
@@ -344,6 +301,9 @@ extern "C"
 					prog_drawPhong_multi_mrt[1],				// draw Phong shading model, multiple lights, MRT
 					prog_drawLambert_multi_mrt[1],				// draw Lambert shading model, multiple lights, MRT
 					prog_drawTexture_mrt[1];					// draw texture, MRT
+				a3_DemoStateShaderProgram
+					prog_drawTexture_outline[1],				// draw texture with outlines from prior pass
+					prog_drawPhong_multi_shadow_mrt[1];			// draw Phong shading with shadow mapping
 			};
 		};
 
@@ -368,17 +328,19 @@ extern "C"
 
 
 		// ****TO-DO: 
-		//	-> 2.1a: framebuffer object union
-		
+		//	-> 2.1: LOOK HERE
+		//	-> 3.1: LOOK HERE
 		// framebuffers
 		union {
 			a3_Framebuffer framebuffer[demoStateMaxCount_framebuffer];
 			struct {
 				a3_Framebuffer
-					fbo_scene[1];								// framebuffer for capturing scene
+					fbo_scene_c16d24s8_mrt[1];					// framebuffer for capturing scene
+				a3_Framebuffer
+					fbo_shadow_d32[1],							// framebuffer for capturing shadow map
+					fbo_composite_c16[1];						// framebuffer for composition
 			};
 		};
-		
 
 
 		// managed objects, no touchie
@@ -387,35 +349,6 @@ extern "C"
 
 		//---------------------------------------------------------------------
 	};
-
-	
-//-----------------------------------------------------------------------------
-
-	// demo-related functions
-
-	// idle loop
-	void a3demo_input(a3_DemoState* demoState, a3f64 dt);
-	void a3demo_update(a3_DemoState* demoState, a3f64 dt);
-	void a3demo_render(a3_DemoState const* demoState);
-
-	// loading
-	void a3demo_loadGeometry(a3_DemoState* demoState);
-	void a3demo_loadShaders(a3_DemoState* demoState);
-	void a3demo_loadTextures(a3_DemoState* demoState);
-	void a3demo_loadFramebuffers(a3_DemoState* demoState);
-	void a3demo_refresh(a3_DemoState* demoState);
-
-	// unloading
-	void a3demo_unloadGeometry(a3_DemoState* demoState);
-	void a3demo_unloadShaders(a3_DemoState* demoState);
-	void a3demo_unloadTextures(a3_DemoState* demoState);
-	void a3demo_unloadFramebuffers(a3_DemoState* demoState);
-	void a3demo_validateUnload(a3_DemoState const* demoState);
-
-	// other utils & setup
-	void a3demo_setDefaultGraphicsState();
-	void a3demo_initScene(a3_DemoState* demoState);
-	void a3demo_initSceneRefresh(a3_DemoState* demoState);
 
 
 //-----------------------------------------------------------------------------

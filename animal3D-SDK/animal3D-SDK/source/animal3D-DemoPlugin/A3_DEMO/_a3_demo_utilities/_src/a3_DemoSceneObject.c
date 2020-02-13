@@ -22,7 +22,7 @@
 	Example of demo utility source file.
 */
 
-#include "a3_DemoSceneObject.h"
+#include "../a3_DemoSceneObject.h"
 
 
 //-----------------------------------------------------------------------------

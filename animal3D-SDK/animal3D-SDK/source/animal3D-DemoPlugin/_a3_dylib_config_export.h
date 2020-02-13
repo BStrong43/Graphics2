@@ -18,7 +18,7 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	a3_dylib_config_export.h
+	_a3_dylib_config_export.h
 	Multi-platform dynamic library export/import configuration.
 
 	**DO NOT MODIFY THIS FILE**

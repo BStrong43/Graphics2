@@ -83,15 +83,11 @@ void a3demo_unloadTextures(a3_DemoState* demoState)
 // utility to unload framebuffers
 void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 {
-	// ****TO-DO: 
-	//	-> 2.1e: framebuffer unloading
-	
 	a3_Framebuffer* currentFBO = demoState->framebuffer,
 		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	while (currentFBO < endFBO)
 		a3framebufferRelease(currentFBO++);
-	
 }
 
 
@@ -100,9 +96,6 @@ void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 // confirm that all graphics objects were unloaded
 void a3demo_validateUnload(const a3_DemoState *demoState)
 {
-	// ****TO-DO: 
-	//	-> 2.1f: validate release of framebuffers
-
 	a3ui32 handle;
 	const a3_BufferObject *currentBuff = demoState->drawDataBuffer,
 		*const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;

@@ -17,42 +17,34 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
-	
-	a3_DemoRenderUtils.h
-	Drawing utilities for demo state.
+
+	a3_Demo_Shading_initialize.c
+	Demo mode implementations: shading initialization.
+
+	********************************************
+	*** INITIALIZATION FOR SHADING DEMO MODE ***
+	********************************************
 */
 
-#ifndef __ANIMAL3D_DEMORENDERUTILS_H
-#define __ANIMAL3D_DEMORENDERUTILS_H
-
-
 //-----------------------------------------------------------------------------
-// animal3D framework includes
 
-#include "animal3D/animal3D.h"
-#include "animal3D-A3DG/animal3D-A3DG.h"
-#include "animal3D-A3DM/animal3D-A3DM.h"
+#include "../a3_Demo_Shading.h"
+
+typedef struct a3_DemoState a3_DemoState;
+// #include "../a3_DemoState.h"
 
 
 //-----------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C"
+void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode)
 {
-#else	// !__cplusplus
-#endif	// __cplusplus
-
-	
-//-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
-
-
-#ifdef __cplusplus
+	demoMode->pipeline = shading_back;
+	demoMode->target_back = shading_back_composite;
+	demoMode->target_fbo = shading_fbo_composite;
+	demoMode->render = shading_renderSolid;
+	demoMode->display = shading_displayTexture;
+	demoMode->activeCamera = shading_cameraSceneViewer;
 }
-#endif	// __cplusplus
 
 
-#endif	// !__ANIMAL3D_DEMORENDERUTILS_H
+//-----------------------------------------------------------------------------

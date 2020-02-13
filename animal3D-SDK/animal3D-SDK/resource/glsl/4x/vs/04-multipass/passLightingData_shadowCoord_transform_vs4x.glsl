@@ -18,26 +18,24 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	a3_DemoRenderUtils.c
-	Drawing utilities implementations.
+	passLightingData_shadowCoord_transform_vs4x.glsl
+	Vertex shader that prepares and passes lighting data. Outputs transformed 
+		position attribute and all others required for lighting. Also computes 
+		and passes shadow coordinate.
 */
 
-#include "a3_DemoRenderUtils.h"
+#version 410
 
+// ****TO-DO: 
+//	0) copy previous lighting data vertex shader
+//	1) declare MVPB matrix for light
+//	2) declare varying for shadow coordinate
+//	3) calculate and pass shadow coordinate
 
-//-----------------------------------------------------------------------------
+layout (location = 0) in vec4 aPosition;
 
-// OpenGL
-#ifdef _WIN32
-#include <Windows.h>
-#include <GL/GL.h>
-#else	// !_WIN32
-#include <OpenGL/gl3.h>
-#endif	// _WIN32
-
-
-//-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
+void main()
+{
+	// DUMMY OUTPUT: directly assign input position to output position
+	gl_Position = aPosition;
+}
