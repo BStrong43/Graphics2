@@ -230,6 +230,9 @@
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawTexture_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\04-multipass\drawPhong_multi_shadow_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\04-multipass\drawTexture_outline_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blendScreen4_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blurGaussian_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_brightPass_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passLightingData_transform_vs4x.glsl" />

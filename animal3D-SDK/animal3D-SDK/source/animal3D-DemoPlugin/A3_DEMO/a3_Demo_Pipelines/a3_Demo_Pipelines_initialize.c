@@ -38,14 +38,40 @@ typedef struct a3_DemoState a3_DemoState;
 
 void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode)
 {
-	demoMode->pipeline = pipelines_forward;
 	demoMode->render = pipelines_renderPhong;
 	demoMode->display = pipelines_displayTexture;
 	demoMode->activeCamera = pipelines_cameraSceneViewer;
+
+	demoMode->pipeline = pipelines_forward;
 	demoMode->pass = pipelines_passComposite;
-	demoMode->target_shadow = pipelines_shadow_fragdepth;
-	demoMode->target_scene = pipelines_scene_finalcolor;
-	demoMode->target_composite = pipelines_composite_finalcolor;
+
+	demoMode->targetIndex[pipelines_passShadow] = pipelines_shadow_fragdepth;
+	demoMode->targetIndex[pipelines_passScene] = pipelines_scene_finalcolor;
+	demoMode->targetIndex[pipelines_passComposite] = pipelines_composite_finalcolor;
+	demoMode->targetIndex[pipelines_passBright_2] = pipelines_bright_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurH_2] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurV_2] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBright_4] = pipelines_bright_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurH_4] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurV_4] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBright_8] = pipelines_bright_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurH_8] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBlurV_8] = pipelines_blur_finalcolor;
+	demoMode->targetIndex[pipelines_passBlend] = pipelines_display_finalcolor;
+
+	demoMode->targetCount[pipelines_passShadow] = pipelines_target_shadow_max;
+	demoMode->targetCount[pipelines_passScene] = pipelines_target_scene_max;
+	demoMode->targetCount[pipelines_passComposite] = pipelines_target_composite_max;
+	demoMode->targetCount[pipelines_passBright_2] = pipelines_target_bright_max;
+	demoMode->targetCount[pipelines_passBlurH_2] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBlurV_2] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBright_4] = pipelines_target_bright_max;
+	demoMode->targetCount[pipelines_passBlurH_4] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBlurV_4] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBright_8] = pipelines_target_bright_max;
+	demoMode->targetCount[pipelines_passBlurH_8] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBlurV_8] = pipelines_target_blur_max;
+	demoMode->targetCount[pipelines_passBlend] = pipelines_target_display_max;
 }
 
 

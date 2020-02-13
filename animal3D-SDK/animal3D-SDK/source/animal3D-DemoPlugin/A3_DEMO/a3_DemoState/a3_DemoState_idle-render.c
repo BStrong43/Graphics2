@@ -115,7 +115,9 @@ void a3demo_render_controls_gen(a3_DemoState const* demoState,
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"ANIMATION (toggle 'm') %s", boolText[demoState->updateAnimation]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"STENCIL (toggle 'i') %s", boolText[demoState->stencilTest]);
+		"STENCIL TEST (toggle 'i') %s", boolText[demoState->stencilTest]);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"SKIP INTERMEDIATE PASSES (toggle 'I') %s", boolText[demoState->skipIntermediatePasses]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"    Forward point light count ('l' decr | incr 'L'): %u / %u", demoState->forwardLightCount, demoStateMaxCount_lightObject);
 

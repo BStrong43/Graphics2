@@ -38,6 +38,8 @@
 #define a3demoCtrlDecLoop(value, maximum)								(value = (value + maximum - 1) % maximum)
 #define a3demoCtrlIncCap(value, maximum)								(value = value < maximum ? value + 1 : value)
 #define a3demoCtrlDecCap(value, minimum)								(value = value > minimum ? value - 1 : value)
+#define a3demoCtrlIncClamp(value, maximum, minimum)						(value = value < maximum && value > minimum ? maximum : value)
+#define a3demoCtrlDecClamp(value, maximum, minimum)						(value = value > minimum && value < maximum ? minimum : value)
 
 #define a3demoCtrlCaseToggle(value, ctrl)								case ctrl: a3demoCtrlToggle(value); break
 #define a3demoCtrlCaseIncLoop(value, maximum, ctrl)						case ctrl: a3demoCtrlIncLoop(value, maximum); break

@@ -90,7 +90,7 @@ extern "C"
 				uTex_nm, uTex_hm,			// named texture map handles for intermediate shading
 				uTex_dm_ramp, uTex_sm_ramp,	// named texture ramp handles
 				uTex_shadow, uTex_proj,		// named shadow map and projective texture
-				uImage0, uImage1, uImage2, uImage3, uImage4, uImage5, uImage6, uImage7;	// generic texture handles
+				uImage00, uImage01, uImage02, uImage03, uImage04, uImage05, uImage06, uImage07;	// generic texture handles
 
 			a3i32
 				// common general uniform handles

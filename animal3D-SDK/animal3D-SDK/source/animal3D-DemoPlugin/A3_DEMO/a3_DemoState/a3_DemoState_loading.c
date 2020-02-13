@@ -393,7 +393,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	const a3f32 defaultFloat[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	const a3f64 defaultDouble[] = { 0.0, 0.0, 0.0, 1.0 };
 	const a3i32 defaultInt[] = { 0, 0, 0, 1 };
-	const a3i32 defaultTexUnits[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	const a3i32 defaultTexUnits[] = {
+		a3tex_unit00, a3tex_unit01, a3tex_unit02, a3tex_unit03,
+		a3tex_unit04, a3tex_unit05, a3tex_unit06, a3tex_unit07,
+		a3tex_unit08, a3tex_unit09, a3tex_unit10, a3tex_unit11,
+		a3tex_unit12, a3tex_unit13, a3tex_unit14, a3tex_unit15
+	};
 
 
 	// list of all unique shaders
@@ -440,6 +445,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				drawTexture_outline_fs[1],
 				drawPhong_multi_shadow_mrt_fs[1];
+			// 05-bloom
+			a3_DemoStateShader
+				drawTexture_brightPass_fs[1],
+				drawTexture_blurGaussian_fs[1],
+				drawTexture_blendScreen4_fs[1];
 		};
 	} shaderList = {
 		{
@@ -458,7 +468,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
 			// 04-multipass
-			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/e/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
 
 			// fs
 			// base
@@ -477,8 +487,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawPhong_multi_mrt_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawNonphoto_multi_mrt_fs4x.glsl" } } },
 			// 04-multipass
-			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawTexture_outline_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawTexture_outline_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
+			// 05-bloom
+			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_brightPass_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blurGaussian_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blendScreen4_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -603,6 +617,35 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_outline_fs->shader);
 
+	// 05-bloom programs: 
+	// ****TO-DO: 
+	//	-> 2.1b: setup bright pass program
+	/*
+	// texturing with bright-pass or tone-mapping
+	currentDemoProg = demoState->prog_drawTexture_brightPass;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-bright");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_brightPass_fs->shader);
+	*/
+	// ****TO-DO: 
+	//	-> 3.1a: setup Gaussian blur program
+	/*
+	// texturing with Gaussian blurring
+	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blur");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blurGaussian_fs->shader);
+	*/
+	// ****TO-DO: 
+	//	-> 4.1a: setup screen blending program
+	/*
+	// texturing with bloom composition
+	currentDemoProg = demoState->prog_drawTexture_blendScreen4;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blend4");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
+	*/
+
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -631,10 +674,6 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	}
 
 
-	// ****TO-DO: 
-	//	-> 2.1: LOOK HERE
-	//	-> 3.1: LOOK HERE
-	//	-> 4.1: LOOK HERE
 	// prepare uniforms algorithmically instead of manually for all programs
 	// get uniform and uniform block locations and set default values for all 
 	//	programs that have a uniform that will either never change or is
@@ -672,14 +711,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_sm_ramp, defaultTexUnits + 5);
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_shadow, defaultTexUnits + 6);
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_proj, defaultTexUnits + 7);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage0, defaultTexUnits + 0);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage1, defaultTexUnits + 1);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage2, defaultTexUnits + 2);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage3, defaultTexUnits + 3);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage4, defaultTexUnits + 4);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage5, defaultTexUnits + 5);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage6, defaultTexUnits + 6);
-		a3demo_setUniformDefaultInteger(currentDemoProg, uImage7, defaultTexUnits + 7);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage00, defaultTexUnits + 0);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage01, defaultTexUnits + 1);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage02, defaultTexUnits + 2);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage03, defaultTexUnits + 3);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage04, defaultTexUnits + 4);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage05, defaultTexUnits + 5);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage06, defaultTexUnits + 6);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage07, defaultTexUnits + 7);
 
 		// common general
 		a3demo_setUniformDefaultDouble(currentDemoProg, uAxis, defaultDouble);
@@ -783,14 +822,18 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 }
 
 
-// ****TO-DO: 
-//	-> 2.1: LOOK HERE
 // utility to load framebuffers
 void a3demo_loadFramebuffers(a3_DemoState* demoState)
 {
 	// create framebuffers and change their texture settings if need be
 	a3_Framebuffer* fbo;
 	a3ui32 i, j;
+
+	// frame sizes
+	const a3ui16 frameWidth1 = demoState->frameWidth, frameHeight1 = demoState->frameHeight;
+	const a3ui16 frameWidth2 = frameWidth1 / 2, frameHeight2 = frameHeight1 / 2;
+	const a3ui16 frameWidth4 = frameWidth2 / 2, frameHeight4 = frameHeight2 / 2;
+	const a3ui16 frameWidth8 = frameWidth4 / 2, frameHeight8 = frameHeight4 / 2;
 
 	// storage precision and targets
 	const a3_FramebufferColorType colorType_scene = a3fbo_colorRGBA16;
@@ -800,8 +843,11 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	const a3_FramebufferDepthType depthType_shadow = a3fbo_depth32;
 	const a3ui16 shadowMapSz = 2048;
 
-	const a3_FramebufferColorType colorType_composite = a3fbo_colorRGBA8;
+	const a3_FramebufferColorType colorType_composite = a3fbo_colorRGBA8;//a3fbo_colorRGBA16;
 	const a3ui32 targets_composite = 1;
+
+	const a3_FramebufferColorType colorType_post = colorType_composite;
+	const a3ui32 targets_post = 2;
 
 
 	// initialize framebuffers: 
@@ -809,17 +855,44 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	fbo = demoState->fbo_scene_c16d24s8_mrt;
 	a3framebufferCreate(fbo, "fbo:scene",
 		targets_scene, colorType_scene, depthType_scene,
-		demoState->frameWidth, demoState->frameHeight);
+		frameWidth1, frameHeight1);
+
 	//	-> shadow map, depth only
 	fbo = demoState->fbo_shadow_d32;
 	a3framebufferCreate(fbo, "fbo:shadow",
 		0, a3fbo_colorDisable, depthType_shadow,
 		shadowMapSz, shadowMapSz);
-	//	-> compositing, color only
-	fbo = demoState->fbo_composite_c16;
-	a3framebufferCreate(fbo, "fbo:composite",
-		targets_composite, colorType_composite, a3fbo_depthDisable,
-		demoState->frameWidth, demoState->frameHeight);
+
+	for (i = 0; i < 3; ++i)
+	{
+		//	-> compositing, color only
+		fbo = demoState->fbo_composite_c16 + i;
+		a3framebufferCreate(fbo, "fbo:composite",
+			targets_composite, colorType_composite, a3fbo_depthDisable,
+			frameWidth1, frameHeight1);
+
+		// ****TO-DO: 
+		//	-> 2.1c: set up half-size framebuffers
+		/*
+		//	-> post-processing, color only
+		fbo = demoState->fbo_post_c16_2fr + i;
+		???
+		???
+		???
+		*/
+		// ****TO-DO: 
+		//	-> 4.1b: set up smaller framebuffers
+		/*
+		fbo = demoState->fbo_post_c16_4fr + i;
+		???
+		???
+		???
+		fbo = demoState->fbo_post_c16_8fr + i;
+		???
+		???
+		???
+		*/
+	}
 
 
 	// change texture settings for all framebuffers

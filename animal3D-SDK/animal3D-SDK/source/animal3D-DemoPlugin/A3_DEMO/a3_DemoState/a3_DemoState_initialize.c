@@ -98,7 +98,8 @@ void a3demo_initScene(a3_DemoState *demoState)
 
 	// additional cameras
 	projector = demoState->shadowLight + 0;
-	projector->fovy = a3real_fortyfive;
+	projector->perspective = a3true;
+	projector->fovy = a3real_ninety;
 	projector->znear = 10.0f;
 	projector->zfar = 100.0f;
 	projector->ctrlMoveSpeed = 10.0f;
@@ -129,6 +130,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 	demoState->displayPipeline = a3false;
 	demoState->updateAnimation = a3true;
 	demoState->stencilTest = a3false;
+	demoState->skipIntermediatePasses = a3false;
 
 
 	// lights

@@ -74,14 +74,6 @@ void a3shading_render_controls(a3_DemoState const* demoState, a3_Demo_Shading co
 		targetText_back,
 		targetText_fbo,
 	};
-	a3ui32 const target[shading_pipeline_max] = {
-		demoMode->target_back,
-		demoMode->target_fbo,
-	};
-	a3ui32 const targetMax[shading_pipeline_max] = {
-		shading_target_back_max,
-		shading_target_fbo_max,
-	};
 
 	// forward pipeline names
 	a3byte const* renderProgramName[shading_render_max] = {
@@ -103,11 +95,11 @@ void a3shading_render_controls(a3_DemoState const* demoState, a3_Demo_Shading co
 	a3vec4 const col = { a3real_half, a3real_zero, a3real_half, a3real_one };
 
 	// pipeline and target
-	a3_Demo_Shading_PipelineName const pipeline = demoMode->pipeline;
-	a3ui32 const targetIndex = target[pipeline];
-	a3ui32 const targetCount = targetMax[pipeline];
 	a3_Demo_Shading_RenderProgramName const render = demoMode->render;
 	a3_Demo_Shading_DisplayProgramName const display = demoMode->display;
+	a3_Demo_Shading_PipelineName const pipeline = demoMode->pipeline;
+	a3_Demo_Shading_TargetName const targetIndex = demoMode->targetIndex[pipeline];
+	a3_Demo_Shading_TargetName const targetCount = demoMode->targetCount[pipeline];
 
 	// demo modes
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
@@ -137,7 +129,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 	const a3_DemoPointLight* pointLight;
 
 	// framebuffers
-	const a3_Framebuffer* currentReadFBO, * currentWriteFBO;
+	const a3_Framebuffer* currentWriteFBO, * currentDisplayFBO;
 
 	// indices
 	a3ui32 i, j, k;
@@ -221,24 +213,24 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		},
 	};
 
-	// framebuffers from which to read based on pipeline mode
-	const a3_Framebuffer* readFBO[shading_pipeline_max] = {
+	// framebuffers to which to write based on pipeline mode
+	const a3_Framebuffer* writeFBO[shading_pipeline_max] = {
 		0,
 		demoState->fbo_scene_c16d24s8_mrt,
 	};
+
+	// target info for current pipeline mode
+	a3_Demo_Shading_RenderProgramName const render = demoMode->render;
+	a3_Demo_Shading_DisplayProgramName const display = demoMode->display;
+	a3_Demo_Shading_PipelineName const pipeline = demoMode->pipeline;
+	a3_Demo_Shading_TargetName const targetIndex = demoMode->targetIndex[pipeline], targetCount = demoMode->targetCount[pipeline];
+
 
 	// tmp lighting data
 	a3f32 lightSz[demoStateMaxCount_lightObject];
 	a3f32 lightSzInvSq[demoStateMaxCount_lightObject];
 	a3vec4 lightPos[demoStateMaxCount_lightObject];
 	a3vec4 lightCol[demoStateMaxCount_lightObject];
-
-
-	// pipeline
-	a3_Demo_Shading_PipelineName const pipeline = demoMode->pipeline;
-	a3_Demo_Shading_RenderProgramName const render = demoMode->render;
-	a3_Demo_Shading_DisplayProgramName const display = demoMode->display;
-
 
 	// final model matrix and full matrix stack
 	a3mat4 viewMat = activeCameraObject->modelMatInv;
@@ -267,32 +259,22 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		// skybox or regular clear
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_BLEND);
-		if (demoState->displaySkybox)
-		{
-			// change depth mode to 'always' to ensure box gets drawn and resets depth
-			glDepthFunc(GL_ALWAYS);
-			a3demo_drawModelTextured_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, demoState->prog_drawTexture, demoState->draw_skybox, demoState->tex_skybox_clouds);
-			glDepthFunc(GL_LEQUAL);
-		}
-		else
-		{
-			// clearing is expensive!
-			// only call clear if skybox is not used; 
-			//	skybox will draw over everything otherwise
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
+
+		// clearing is expensive!
+		// only call clear if skybox is not used at all; 
+		//	skybox will draw over everything otherwise
+		// change depth mode to 'always' to ensure box gets drawn and resets depth
+		glDepthFunc(GL_ALWAYS);
+		currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
+		a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
+		glDepthFunc(GL_LEQUAL);
 		break;
 
 		// shading with MRT FBO
 	case shading_fbo:
 		// target scene framebuffer
-		currentWriteFBO = demoState->fbo_scene_c16d24s8_mrt;
-		a3framebufferActivate(currentWriteFBO);
-
-		// clear now, handle skybox later
-		glDisable(GL_STENCIL_TEST);
-		glDisable(GL_BLEND);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		currentWriteFBO = writeFBO[pipeline];
+		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
 		break;
 	}
 
@@ -397,7 +379,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 
 	// select framebuffer to display based on mode
-	currentReadFBO = readFBO[pipeline];
+	currentDisplayFBO = writeFBO[pipeline];
 
 	// select output to display
 	switch (pipeline)
@@ -410,34 +392,29 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		// scene was rendered to framebuffer
 	case shading_fbo:
 		// composite skybox
-		if (demoState->displaySkybox)
-		{
-			a3demo_drawModelTextured_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, demoState->prog_drawTexture, demoState->draw_skybox, demoState->tex_skybox_clouds);
-			a3demo_enableCompositeBlending();
-		}
+		currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
+		a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
+		a3demo_enableCompositeBlending();
 
 		// select output to display
-		if (currentReadFBO->color && (!currentReadFBO->depthStencil || demoMode->target_fbo < shading_fbo_fragdepth))
-			a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, demoMode->target_fbo);
+		if (currentDisplayFBO->color && (!currentDisplayFBO->depthStencil || targetIndex < targetCount - 1))
+			a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);
 		else
-			a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
+			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
 		break;
 	}
 
 
 	// final display: activate desired final program and draw FSQ
-	if (currentReadFBO)
+	if (currentDisplayFBO)
 	{
 		// prepare for final draw
 		currentDrawable = demoState->draw_unitquad;
 		a3vertexDrawableActivate(currentDrawable);
 
 		// determine if additional passes are required
-		{
-			// most basic option: simply display texture
-			currentDemoProgram = displayProgram[pipeline][display];
-			a3shaderProgramActivate(currentDemoProgram->program);
-		}
+		currentDemoProgram = displayProgram[pipeline][display];
+		a3shaderProgramActivate(currentDemoProgram->program);
 
 		// done
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);

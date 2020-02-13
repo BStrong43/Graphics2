@@ -42,26 +42,16 @@ extern "C"
 {
 #else	// !__cplusplus
 	typedef struct a3_Demo_Pipelines					a3_Demo_Pipelines;
-	typedef enum a3_Demo_Pipelines_PipelineName			a3_Demo_Pipelines_PipelineName;
 	typedef enum a3_Demo_Pipelines_RenderProgramName	a3_Demo_Pipelines_RenderProgramName;
 	typedef enum a3_Demo_Pipelines_DisplayProgramName	a3_Demo_Pipelines_DisplayProgramName;
 	typedef enum a3_Demo_Pipelines_ActiveCameraName		a3_Demo_Pipelines_ActiveCameraName;
+	typedef enum a3_Demo_Pipelines_PipelineName			a3_Demo_Pipelines_PipelineName;
 	typedef enum a3_Demo_Pipelines_PassName				a3_Demo_Pipelines_PassName;
-	typedef enum a3_Demo_Pipelines_TargetName_Shadow	a3_Demo_Pipelines_TargetName_Shadow;
-	typedef enum a3_Demo_Pipelines_TargetName_Scene		a3_Demo_Pipelines_TargetName_Scene;
-	typedef enum a3_Demo_Pipelines_TargetName_Composite	a3_Demo_Pipelines_TargetName_Composite;
+	typedef enum a3_Demo_Pipelines_TargetName			a3_Demo_Pipelines_TargetName;
 #endif	// __cplusplus
 
 
 //-----------------------------------------------------------------------------
-
-	// pipeline names
-	enum a3_Demo_Pipelines_PipelineName
-	{
-		pipelines_forward,				// forward lighting pipeline
-
-		pipelines_pipeline_max
-	};
 
 	// scene object rendering program names
 	enum a3_Demo_Pipelines_RenderProgramName
@@ -90,46 +80,64 @@ extern "C"
 		pipelines_camera_max
 	};
 
+
+	// pipeline names
+	enum a3_Demo_Pipelines_PipelineName
+	{
+		pipelines_forward,				// forward lighting pipeline
+
+		pipelines_pipeline_max
+	};
+
 	// render passes
 	enum a3_Demo_Pipelines_PassName
 	{
 		pipelines_passShadow,			// capture shadow map
 		pipelines_passScene,			// render scene objects
 		pipelines_passComposite,		// composite for post-processing stage
+		pipelines_passBright_2,			// bright pass for bloom (half screen size)
+		pipelines_passBlurH_2,			// horizontal blur for bloom (half screen size)
+		pipelines_passBlurV_2,			// horizontal blur for bloom (half screen size)
+		pipelines_passBright_4,			// bright pass for bloom (quarter screen size)
+		pipelines_passBlurH_4,			// horizontal blur for bloom (quarter screen size)
+		pipelines_passBlurV_4,			// horizontal blur for bloom (quarter screen size)
+		pipelines_passBright_8,			// bright pass for bloom (eighth screen size)
+		pipelines_passBlurH_8,			// horizontal blur for bloom (eighth screen size)
+		pipelines_passBlurV_8,			// horizontal blur for bloom (eighth screen size)
+		pipelines_passBlend,			// bloom composite pass
 
 		pipelines_pass_max
 	};
 
-	// render target names - shadow pass
-	enum a3_Demo_Pipelines_TargetName_Shadow
+	// render target names
+	enum a3_Demo_Pipelines_TargetName
 	{
-		pipelines_shadow_fragdepth,		// fragment depth
+		pipelines_shadow_fragdepth = 0,		// fragment depth
+		pipelines_target_shadow_max, 
 
-		pipelines_target_shadow_max
-	};
+		pipelines_scene_finalcolor = 0,		// final display color
+		pipelines_scene_position,			// position attribute
+		pipelines_scene_normal,				// normal attribute
+		pipelines_scene_texcoord,			// texcoord attribute
+		pipelines_scene_shadowcoord,		// shadow coordinate
+		pipelines_scene_shadowtest,			// result of shadow test
+		pipelines_scene_diffuseLight,		// diffuse light total
+		pipelines_scene_specularLight,		// specular light total
+		pipelines_scene_fragdepth,			// fragment depth
+		pipelines_target_scene_max, 
 
-	// render target names - scene pass
-	enum a3_Demo_Pipelines_TargetName_Scene
-	{
-		pipelines_scene_finalcolor,		// final display color
-		pipelines_scene_position,		// position attribute
-		pipelines_scene_normal,			// normal attribute
-		pipelines_scene_texcoord,		// texcoord attribute
-		pipelines_scene_shadowcoord,	// shadow coordinate
-		pipelines_scene_shadowtest,		// result of shadow test
-		pipelines_scene_diffuseLight,	// diffuse light total
-		pipelines_scene_specularLight,	// specular light total
-		pipelines_scene_fragdepth,		// fragment depth
+		pipelines_composite_finalcolor = 0,	// final display color
+		pipelines_target_composite_max,
 
-		pipelines_target_scene_max
-	};
+		pipelines_bright_finalcolor = 0,	// final display color
+		pipelines_bright_luminance,			// luminance of color
+		pipelines_target_bright_max,
 
-	// render target names - composite pass
-	enum a3_Demo_Pipelines_TargetName_Composite
-	{
-		pipelines_composite_finalcolor,	// final display color
+		pipelines_blur_finalcolor = 0,		// final display color
+		pipelines_target_blur_max,
 
-		pipelines_target_composite_max
+		pipelines_display_finalcolor = 0,	// final display color
+		pipelines_target_display_max,
 	};
 
 
@@ -138,14 +146,13 @@ extern "C"
 	// demo mode for basic shading
 	struct a3_Demo_Pipelines
 	{
-		a3_Demo_Pipelines_PipelineName pipeline;
 		a3_Demo_Pipelines_RenderProgramName render;
 		a3_Demo_Pipelines_DisplayProgramName display;
 		a3_Demo_Pipelines_ActiveCameraName activeCamera;
+
+		a3_Demo_Pipelines_PipelineName pipeline;
 		a3_Demo_Pipelines_PassName pass;
-		a3_Demo_Pipelines_TargetName_Shadow target_shadow;
-		a3_Demo_Pipelines_TargetName_Scene target_scene;
-		a3_Demo_Pipelines_TargetName_Composite target_composite;
+		a3_Demo_Pipelines_TargetName targetIndex[pipelines_pass_max], targetCount[pipelines_pass_max];
 	};
 
 

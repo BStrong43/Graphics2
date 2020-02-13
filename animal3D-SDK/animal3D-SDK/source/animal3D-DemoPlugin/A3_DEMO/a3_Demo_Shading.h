@@ -42,49 +42,15 @@ extern "C"
 {
 #else	// !__cplusplus
 	typedef struct a3_Demo_Shading						a3_Demo_Shading;
-	typedef enum a3_Demo_Shading_PipelineName			a3_Demo_Shading_PipelineName;
-	typedef enum a3_Demo_Shading_TargetName_Back		a3_Demo_Shading_TargetName_Back;
-	typedef enum a3_Demo_Shading_TargetName_FBO			a3_Demo_Shading_TargetName_FBO;
 	typedef enum a3_Demo_Shading_RenderProgramName		a3_Demo_Shading_RenderProgramName;
 	typedef enum a3_Demo_Shading_DisplayProgramName		a3_Demo_Shading_DisplayProgramName;
 	typedef enum a3_Demo_Shading_ActiveCameraName		a3_Demo_Shading_ActiveCameraName;
+	typedef enum a3_Demo_Shading_PipelineName			a3_Demo_Shading_PipelineName;
+	typedef enum a3_Demo_Shading_TargetName				a3_Demo_Shading_TargetName;
 #endif	// __cplusplus
 
 
 //-----------------------------------------------------------------------------
-
-	// shading pipeline names
-	enum a3_Demo_Shading_PipelineName
-	{
-		shading_back,				// on-screen rendering with back buffer
-		shading_fbo,				// off-screen rendering with MRT FBO
-
-		shading_pipeline_max
-	};
-
-	// on-screen render target names
-	enum a3_Demo_Shading_TargetName_Back
-	{
-		shading_back_composite,		// final composite color
-
-		shading_target_back_max
-	};
-
-	// off-screen render target names
-	enum a3_Demo_Shading_TargetName_FBO
-	{
-		shading_fbo_composite,		// final composite color
-		shading_fbo_position,		// position attribute
-		shading_fbo_normal,			// normal attribute
-		shading_fbo_texcoord,		// texcoord attribute
-		shading_fbo_diffuseTex,		// diffuse texture sample
-		shading_fbo_specularTex,	// specular texture sample
-		shading_fbo_diffuseLight,	// diffuse light total
-		shading_fbo_specularLight,	// specular light total
-		shading_fbo_fragdepth,		// fragment depth
-
-		shading_target_fbo_max
-	};
 
 	// program to use for rendering
 	enum a3_Demo_Shading_RenderProgramName
@@ -108,7 +74,6 @@ extern "C"
 		shading_display_max
 	};
 
-
 	// active camera names
 	enum a3_Demo_Shading_ActiveCameraName
 	{
@@ -118,17 +83,45 @@ extern "C"
 	};
 
 
+	// shading pipeline names
+	enum a3_Demo_Shading_PipelineName
+	{
+		shading_back,				// on-screen rendering with back buffer
+		shading_fbo,				// off-screen rendering with MRT FBO
+
+		shading_pipeline_max
+	};
+
+	// render target names
+	enum a3_Demo_Shading_TargetName
+	{
+		shading_back_composite = 0,	// final composite color
+		shading_target_back_max,
+
+		shading_fbo_composite = 0,	// final composite color
+		shading_fbo_position,		// position attribute
+		shading_fbo_normal,			// normal attribute
+		shading_fbo_texcoord,		// texcoord attribute
+		shading_fbo_diffuseTex,		// diffuse texture sample
+		shading_fbo_specularTex,	// specular texture sample
+		shading_fbo_diffuseLight,	// diffuse light total
+		shading_fbo_specularLight,	// specular light total
+		shading_fbo_fragdepth,		// fragment depth
+		shading_target_fbo_max,
+	};
+
+
 //-----------------------------------------------------------------------------
 
 	// demo mode for basic shading
 	struct a3_Demo_Shading
 	{
-		a3_Demo_Shading_PipelineName pipeline;
-		a3_Demo_Shading_TargetName_Back target_back;
-		a3_Demo_Shading_TargetName_FBO target_fbo;
 		a3_Demo_Shading_RenderProgramName render;
 		a3_Demo_Shading_DisplayProgramName display;
 		a3_Demo_Shading_ActiveCameraName activeCamera;
+
+		a3_Demo_Shading_PipelineName pipeline;
+		a3_Demo_Shading_TargetName targetIndex[shading_pipeline_max], targetCount[shading_pipeline_max];
 	};
 
 

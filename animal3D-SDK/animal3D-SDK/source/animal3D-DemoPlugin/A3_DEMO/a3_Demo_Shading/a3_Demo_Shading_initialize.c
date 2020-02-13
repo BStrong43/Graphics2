@@ -38,12 +38,17 @@ typedef struct a3_DemoState a3_DemoState;
 
 void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode)
 {
-	demoMode->pipeline = shading_back;
-	demoMode->target_back = shading_back_composite;
-	demoMode->target_fbo = shading_fbo_composite;
 	demoMode->render = shading_renderSolid;
 	demoMode->display = shading_displayTexture;
 	demoMode->activeCamera = shading_cameraSceneViewer;
+
+	demoMode->pipeline = shading_back;
+
+	demoMode->targetIndex[shading_back] = shading_back_composite;
+	demoMode->targetIndex[shading_fbo] = shading_fbo_composite;
+
+	demoMode->targetCount[shading_back] = shading_target_back_max;
+	demoMode->targetCount[shading_fbo] = shading_target_fbo_max;
 }
 
 

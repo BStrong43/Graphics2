@@ -104,7 +104,7 @@ extern "C"
 		
 		demoStateMaxCount_texture = 16,
 
-		demoStateMaxCount_framebuffer = 4,
+		demoStateMaxCount_framebuffer = 16,
 	};
 
 	
@@ -166,6 +166,7 @@ extern "C"
 		a3boolean displayWorldAxes, displayObjectAxes, displayTangentBases;
 		a3boolean updateAnimation;
 		a3boolean stencilTest;
+		a3boolean skipIntermediatePasses;
 
 		// grid properties
 		a3mat4 gridTransform;
@@ -304,6 +305,10 @@ extern "C"
 				a3_DemoStateShaderProgram
 					prog_drawTexture_outline[1],				// draw texture with outlines from prior pass
 					prog_drawPhong_multi_shadow_mrt[1];			// draw Phong shading with shadow mapping
+				a3_DemoStateShaderProgram
+					prog_drawTexture_brightPass[1],				// draw texture with bright-pass or tone-mapping
+					prog_drawTexture_blurGaussian[1],			// draw texture with Gaussian blurring
+					prog_drawTexture_blendScreen4[1];			// draw texture with 4-layer screen blend
 			};
 		};
 
@@ -327,9 +332,6 @@ extern "C"
 		};
 
 
-		// ****TO-DO: 
-		//	-> 2.1: LOOK HERE
-		//	-> 3.1: LOOK HERE
 		// framebuffers
 		union {
 			a3_Framebuffer framebuffer[demoStateMaxCount_framebuffer];
@@ -337,8 +339,16 @@ extern "C"
 				a3_Framebuffer
 					fbo_scene_c16d24s8_mrt[1];					// framebuffer for capturing scene
 				a3_Framebuffer
-					fbo_shadow_d32[1],							// framebuffer for capturing shadow map
-					fbo_composite_c16[1];						// framebuffer for composition
+					fbo_shadow_d32[1];							// framebuffer for capturing shadow map
+				a3_Framebuffer
+					// ****TO-DO: 
+					//	-> 2.1a: uncomment post-processing framebuffers
+					/*
+					fbo_post_c16_2fr[3],						// framebuffers for post-processing, half frame size
+					fbo_post_c16_4fr[3],						// framebuffers for post-processing, quarter frame size
+					fbo_post_c16_8fr[3],						// framebuffers for post-processing, eighth frame size
+					*/
+					fbo_composite_c16[3];						// framebuffers for composition
 			};
 		};
 

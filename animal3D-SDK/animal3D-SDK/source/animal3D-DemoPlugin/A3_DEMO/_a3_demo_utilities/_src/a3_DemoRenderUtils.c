@@ -88,6 +88,24 @@ extern inline void a3demo_setDefaultGraphicsState()
 	a3demo_enableCompositeBlending();
 }
 
+// set scene draw state
+extern inline void a3demo_setSceneState(a3_Framebuffer const* currentWriteFBO, a3boolean displaySkybox)
+{
+	// activate FBO
+	a3framebufferActivate(currentWriteFBO);
+
+	// choose background color
+//	if (displaySkybox)
+//		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//	else
+//		glClearColor(0.1f, 0.1f, 0.6f, 1.0f);
+
+	// clear now, handle skybox later
+	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_BLEND);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 
 //-----------------------------------------------------------------------------
 // RENDER SUB-ROUTINES
@@ -114,11 +132,12 @@ extern inline void a3demo_drawModelSolidColor(a3real4x4p modelViewProjectionMat,
 	a3demo_drawModelSimple_activateModel(modelViewProjectionMat, viewProjectionMat, modelMat, program, drawable);
 }
 
-extern inline void a3demo_drawModelTextured_invertModel(a3real4x4p modelViewProjectionMat, a3real4x4p const viewProjectionMat, a3real4x4p const modelMat, a3real4x4p const atlasMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3_Texture const* texture)
+extern inline void a3demo_drawModelTexturedColored_invertModel(a3real4x4p modelViewProjectionMat, a3real4x4p const viewProjectionMat, a3real4x4p const modelMat, a3real4x4p const atlasMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3_Texture const* texture, a3real4p const color)
 {
 	// set up render
 	a3shaderProgramActivate(program->program);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uAtlas, 1, *atlasMat);
+	a3shaderUniformSendFloat(a3unif_vec4, program->uColor, 1, color);
 	a3textureActivate(texture, a3tex_unit00);
 
 	// draw inverted

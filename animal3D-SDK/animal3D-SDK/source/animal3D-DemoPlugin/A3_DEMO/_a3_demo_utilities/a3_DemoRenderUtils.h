@@ -77,6 +77,9 @@ inline void a3demo_enableStencilCompare();
 // set default state for renderer
 inline void a3demo_setDefaultGraphicsState();
 
+// set state for scene draw
+inline void a3demo_setSceneState(a3_Framebuffer const* currentWriteFBO, a3boolean displaySkybox);
+
 
 //-----------------------------------------------------------------------------
 
@@ -86,7 +89,7 @@ inline void a3demo_drawModelSimple_activateModel(a3real4x4p modelViewProjectionM
 
 inline void a3demo_drawModelSolidColor(a3real4x4p modelViewProjectionMat, a3real4x4p const viewProjectionMat, a3real4x4p const modelMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3real4p const color);
 
-inline void a3demo_drawModelTextured_invertModel(a3real4x4p modelViewProjectionMat, a3real4x4p const viewProjectionMat, a3real4x4p const modelMat, a3real4x4p const atlasMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3_Texture const* texture);
+inline void a3demo_drawModelTexturedColored_invertModel(a3real4x4p modelViewProjectionMat, a3real4x4p const viewProjectionMat, a3real4x4p const modelMat, a3real4x4p const atlasMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3_Texture const* texture, a3real4p const color);
 
 inline void a3demo_drawModelLighting(a3real4x4p modelViewProjectionMat, a3real4x4p modelViewMat, a3real4x4p const viewProjectionMat, a3real4x4p const viewMat, a3real4x4p const modelMat, a3_DemoStateShaderProgram const* program, a3_VertexDrawable const* drawable, a3real4p const color);
 

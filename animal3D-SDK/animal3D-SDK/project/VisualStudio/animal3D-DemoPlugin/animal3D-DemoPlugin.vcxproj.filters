@@ -85,6 +85,9 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\04-multipass">
       <UniqueIdentifier>{2d1e448c-8909-41db-8100-cbb5ea0c9702}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\05-bloom">
+      <UniqueIdentifier>{88ed4d72-5ae5-4ca4-85e9-35032beb7e0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -231,6 +234,15 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\vs\04-multipass\passLightingData_shadowCoord_transform_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\04-multipass</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blurGaussian_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_brightPass_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blendScreen4_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
     </None>
   </ItemGroup>
 </Project>

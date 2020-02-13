@@ -328,7 +328,7 @@ A3DYLIBSYMBOL void a3demoCB_windowResize(a3_DemoState *demoState, a3i32 newWindo
 	a3_DemoProjector *camera;
 
 	// account for borders here
-	const a3i32 frameBorder = 0;
+	const a3i32 frameBorder = 128;
 	const a3ui32 frameWidth = newWindowWidth + frameBorder + frameBorder;
 	const a3ui32 frameHeight = newWindowHeight + frameBorder + frameBorder;
 	const a3real windowAspect = (a3real)newWindowWidth / (a3real)newWindowHeight;
