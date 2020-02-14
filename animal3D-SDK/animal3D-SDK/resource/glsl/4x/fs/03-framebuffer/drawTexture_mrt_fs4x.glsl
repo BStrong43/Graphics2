@@ -48,11 +48,9 @@ layout (location = 4) out vec4 rtDiffuseMap;
 void main()
 {
 
-	//lab2\
-	vec4 tex = texture(uTex_dm, outTexCoord.xy);
+	vec4 tex = texture2D(uTex_dm, outTexCoord.xy);
 	rtFragColor = tex;
-	
-	//lab 3
+
 	rtTexCoord = outTexCoord;
 	rtViewPos = viewPos;
 	rtViewNormal = normalize(outNormal);

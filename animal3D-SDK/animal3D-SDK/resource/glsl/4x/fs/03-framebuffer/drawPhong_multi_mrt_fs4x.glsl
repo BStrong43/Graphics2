@@ -81,12 +81,12 @@ void main()
 		specLight += specularCoeff;
 	}
 
-	rtFragColor = outColor;
-	rtTexCoord = outTexCoord;
-	rtViewPos = viewPos;
-	rtViewNormal = surfaceNormal;
-	rtDiffuseMap = texD;
-	rtDiffuseLight = diffuseLight;
-	rtSpecularMap = texS;
-	rtSpecularLight = specLight;
+	rtFragColor = vec4(outColor.xyz, 1.0);
+	rtTexCoord = vec4(outTexCoord.xyz, 1.0);
+	rtViewPos = vec4(viewPos.xyz, 1.0);
+	rtViewNormal = vec4(surfaceNormal.xyz, 1.0);
+	rtDiffuseMap = vec4(texD.xyz, 1.0);
+	rtDiffuseLight = vec4(diffuseLight.xyz, 1.0);
+	rtSpecularMap = vec4(texS.xyz, 1.0);
+	rtSpecularLight = vec4(specLight.xyz, 1.0);
 }

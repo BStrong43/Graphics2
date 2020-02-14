@@ -39,7 +39,8 @@ uniform double uTime;
 
 void main()
 {
+	vec3 colorAdd = vec3(1.0, 0.0,0.0);
 	vec4 colorManip = texture(uTex_dm, outTexCoord.xy);
 	float nSin = sin((float(uTime)+1)/2);
-	rtFragColor = vec4(colorManip.xyz * nSin, 1.0);
+	rtFragColor = vec4(colorManip.xyz + (colorAdd * nSin), 1.0);
 }
