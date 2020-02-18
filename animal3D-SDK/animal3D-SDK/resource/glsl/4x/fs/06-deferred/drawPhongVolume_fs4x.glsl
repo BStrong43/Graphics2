@@ -42,6 +42,21 @@ flat in int vInstanceID;
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
 
+struct sPointLight
+{
+	vec4 worldPos;
+	vec4 viewPos;
+	vec4 color;
+	float radius;
+	float radiusInvSq;
+	float pad[2];
+};
+
+uniform ubPointLight 
+{
+	sPointLight uLight[MAX_LIGHTS];
+};
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
