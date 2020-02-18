@@ -31,10 +31,31 @@
 //	4) assign sample to output render target (location 0)
 //	5) declare new render target (location 3) and output texcoord
 
-out vec4 rtFragColor;
+
+in vec4 viewPos;
+in vec4 outNormal;
+
+in vec4 outTexCoord;
+uniform sampler2D uTex_dm;
+
+//Outward Render Target Attributes
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPos;
+layout (location = 2) out vec4 rtViewNormal;
+layout (location = 3) out vec4 rtTexCoord;
+layout (location = 4) out vec4 rtDiffuseMap;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+
+	//lab2\
+	vec4 tex = texture(uTex_dm, outTexCoord.xy);
+	rtFragColor = tex;
+	
+	//lab 3
+	rtTexCoord = outTexCoord;
+	rtViewPos = viewPos;
+	rtViewNormal = normalize(outNormal);
+	rtDiffuseMap = tex;
+
 }

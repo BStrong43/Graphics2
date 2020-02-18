@@ -31,10 +31,40 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+const int NUM_LIGHTS = 4;
+
+uniform sampler2D uTex_dm;
+uniform int uLightCt;
+uniform float uLightSz[NUM_LIGHTS];
+uniform float uLightSzInvSq[NUM_LIGHTS];
+uniform vec4 uLightPos[NUM_LIGHTS];
+uniform vec4 uLightCol[NUM_LIGHTS];
+
+in vec4 outTexCoord;
+in vec4 outNormal;
+in vec4 viewPos;
+
 out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	vec4 texD = texture(uTex_dm, outTexCoord.xy);
+	
+	vec4 outColor;
+	vec4 surfaceNormal = normalize(outNormal);
+	for (int i = 0; i < uLightCt; ++i)
+	{
+		//Calculate normals
+		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
+		//Lighting calculations
+		float diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal));
+		vec4 lambert = diffuseCoeff * texD;
+
+		//Add lighting and color to fragment
+		outColor += lambert * uLightCol[i];
+	}
+
+	// Output calculated sum of colors
+	rtFragColor = outColor;
 }
+

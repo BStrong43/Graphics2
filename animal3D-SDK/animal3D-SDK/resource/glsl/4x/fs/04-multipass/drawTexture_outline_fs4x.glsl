@@ -27,11 +27,35 @@
 // ****TO-DO: 
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
+in vec2 vTexCoord; // Step 2 - inbound texture coordinate
+in vec4 viewPos;
+in vec4 vModelViewNorm;
+
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm; // Step 1 - found in a3_DemoState_loading
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	//https://en.wikibooks.org/wiki/GLSL_Programming/Unity/Toon_Shading
+	
+	float UnlitOutlineThickness = 0.1;
+	float LitOutlineThickness = 0.4;
+	vec4 lightDirection;
+	vec3 frag = texture2D(uTex_dm, vTexCoord).xyz;
+	vec3 outLineColor = vec3(0.0,0.0,0.0);//Black outline
+
+	//calc view direction
+	vec4 viewDirection = normalize(vModelViewNorm - viewPos);
+	//calc surface normal
+	vec4 normalDirection = normalize(vModelViewNorm);
+	
+	//compare angle of view and model normal
+	if(dot(viewDirection, normalDirection) < mix(UnlitOutlineThickness, LitOutlineThickness, max(0.0, dot(normalDirection, viewDirection))))
+	{
+		frag = outLineColor;
+	}
+
+	rtFragColor = vec4(frag, 1.0);
 }

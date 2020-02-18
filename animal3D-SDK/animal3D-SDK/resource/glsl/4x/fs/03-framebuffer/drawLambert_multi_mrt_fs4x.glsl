@@ -33,10 +33,49 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
-out vec4 rtFragColor;
+const int NUM_LIGHTS = 4;
+
+in vec4 outNormal;
+in vec4 viewPos;
+in vec4 outTexCoord;
+
+uniform sampler2D uTex_dm;
+uniform int uLightCt;
+uniform vec4 uLightPos[NUM_LIGHTS];
+uniform vec4 uLightCol[NUM_LIGHTS];
+
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPos;
+layout (location = 2) out vec4 rtViewNormal;
+layout (location = 3) out vec4 rtTexCoord;
+layout (location = 4) out vec4 rtDiffuseMap;
+layout (location = 6) out vec4 rtDiffuseLight;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	vec4 outColor;
+	vec4 diffuseLight;
+	vec4 surfaceNormal = normalize(outNormal);
+	vec4 tex = texture(uTex_dm, outTexCoord.xy);
+
+	for (int i = 0; i < uLightCt; ++i)
+	{
+		//Calculate light direction
+		vec4 lightNormal = normalize(uLightPos[i] - viewPos);
+		//Lighting calculations
+		float diffuseCoeff = max(0.0, dot(surfaceNormal, lightNormal));
+
+		vec4 lambert = diffuseCoeff * tex;
+		
+		diffuseLight += diffuseCoeff;
+		//Add lighting and color to fragment
+		outColor += lambert * uLightCol[i];
+	}
+
+	rtFragColor = outColor;
+	rtTexCoord = outTexCoord;
+	rtViewPos = viewPos;
+	rtViewNormal = surfaceNormal;
+	rtDiffuseMap = tex;
+	rtDiffuseLight = diffuseLight;
 }
