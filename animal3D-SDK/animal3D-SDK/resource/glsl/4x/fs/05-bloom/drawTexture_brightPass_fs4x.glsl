@@ -31,10 +31,17 @@
 
 uniform sampler2D uImage00;
 
+in vec2 vTexCoord;
+
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtLum;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	
+	vec3 lumVec = vec3(0.2126, 0.7152, 0.0722);
+	vec4 outColor = texture(uImage00, vTexCoord);
+	float outLum = dot(outColor.xyz, lumVec);
+	rtFragColor = vec4(outColor.rgb * outLum, 1.0);
+	rtLum = vec4(outLum);
 }

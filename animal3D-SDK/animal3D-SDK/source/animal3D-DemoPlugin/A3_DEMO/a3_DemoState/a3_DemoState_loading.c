@@ -490,7 +490,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawTexture_outline_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
 			// 05-bloom
-			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_brightPass_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_brightPass_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blurGaussian_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blendScreen4_fs4x.glsl" } } },
 		}
@@ -629,22 +629,22 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 3.1a: setup Gaussian blur program
-	/*
+	
 	// texturing with Gaussian blurring
 	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blur");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blurGaussian_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 4.1a: setup screen blending program
-	/*
+	
 	// texturing with bloom composition
 	currentDemoProg = demoState->prog_drawTexture_blendScreen4;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blend4");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
-	*/
+	
 
 
 	// activate a primitive for validation
@@ -876,22 +876,23 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		
 		//	-> post-processing, color only
 		fbo = demoState->fbo_post_c16_2fr + i;
-		//???
-		//??? TO-DO 2.1
-		//???
+		a3framebufferCreate(fbo, "fbo:1/2",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth2, frameHeight2);
 		
 		// ****TO-DO: 
 		//	-> 4.1b: set up smaller framebuffers
-		/*
+		
 		fbo = demoState->fbo_post_c16_4fr + i;
-		//???
-		//??? TO-DO 2.1
-		//???
+		a3framebufferCreate(fbo, "fbo:1/4",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth4, frameHeight4);
+
 		fbo = demoState->fbo_post_c16_8fr + i;
-		//???
-		//??? TO-DO 2.1
-		//???
-		*/
+		fbo = demoState->fbo_post_c16_8fr + i;
+		a3framebufferCreate(fbo, "fbo:3.5",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth8, frameHeight8);
 	}
 
 

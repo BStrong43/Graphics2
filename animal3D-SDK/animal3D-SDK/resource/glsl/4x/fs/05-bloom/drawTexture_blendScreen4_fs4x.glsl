@@ -30,12 +30,22 @@
 //	2) implement screen function with 4 inputs
 //	3) use screen function to sample input textures
 
-uniform sampler2D uImage00;
+in vec2 vTexCoord; // Step 2
 
-layout (location = 0) out vec4 rtFragColor;
+uniform sampler2D uTex_dm;
+uniform sampler2D uImage00;
+uniform sampler2D uImage01;
+out vec4 rtFragColor;
+
+vec4 screen(vec4 a, vec4 b) 
+{
+	return 1.0 - (1.0 - a) * (1.0 - b);
+}
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE YELLOW
-	rtFragColor = vec4(1.0, 1.0, 0.0, 1.0);
+	vec4 tex1 = texture(uImage00, vTexCoord);
+	vec4 tex2 = texture(uTex_dm, vTexCoord);
+	vec4 texBlend = 1.0 - (1.0 - tex1) * (1.0 - tex2);
+	rtFragColor = texBlend;
 }
