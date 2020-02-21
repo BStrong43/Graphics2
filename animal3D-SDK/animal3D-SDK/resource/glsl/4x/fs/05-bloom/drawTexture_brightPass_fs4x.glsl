@@ -31,7 +31,7 @@
 
 uniform sampler2D uImage00;
 
-in vec2 vTexCoord;
+in vec2 passTexcoord;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtLum;
@@ -40,7 +40,7 @@ void main()
 {
 	
 	vec3 lumVec = vec3(0.2126, 0.7152, 0.0722);
-	vec4 outColor = texture(uImage00, vTexCoord);
+	vec4 outColor = texture(uImage00, passTexcoord);
 	float outLum = dot(outColor.xyz, lumVec);
 	rtFragColor = vec4(outColor.rgb * outLum, 1.0);
 	rtLum = vec4(outLum);

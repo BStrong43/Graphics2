@@ -34,7 +34,6 @@ uniform sampler2D uImage00;
 uniform vec2 uSize;
 uniform vec2 uAxis;
 
-float blurCoeff = 2.0;
 
 in vec2 vTexCoord;
 
@@ -47,7 +46,7 @@ vec4 blurGaussian1o8(in sampler2D img, in vec2 center, in vec2 dir);
 
 void main()
 {
-	rtFragColor = blurGaussian1o2(uImage00, vTexCoord, uSize * uAxis * blurCoeff);
+	rtFragColor = blurGaussian1o2(uImage00, vTexCoord, uSize * uAxis);
 }
 
 vec4 blurGaussian1o2(in sampler2D img, in vec2 center, in vec2 dir)
@@ -70,7 +69,7 @@ vec4 blurGaussian1o8(in sampler2D img, in vec2 center, in vec2 dir)
 	vec4 total = texture2D(img, center) * 6;
 	total += texture2D(img, center + dir) * 4;
 	total += texture2D(img, center - dir) * 4;
-	total += texture2D(img, center + (dir * 1));
-	total += texture2D(img, center - (dir * 1));
+	total += texture2D(img, center + (dir * 2));
+	total += texture2D(img, center - (dir * 2));
 	return total * 0.0625;
 }

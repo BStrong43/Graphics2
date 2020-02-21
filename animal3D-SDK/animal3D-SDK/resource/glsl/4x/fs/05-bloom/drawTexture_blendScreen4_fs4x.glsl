@@ -35,6 +35,8 @@ in vec2 vTexCoord; // Step 2
 uniform sampler2D uTex_dm;
 uniform sampler2D uImage00;
 uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
 out vec4 rtFragColor;
 
 vec4 screen(vec4 a, vec4 b) 
@@ -42,10 +44,24 @@ vec4 screen(vec4 a, vec4 b)
 	return 1.0 - (1.0 - a) * (1.0 - b);
 }
 
+vec4 screen(vec4 a, vec4 b, vec4 c, vec4 d)
+{
+	return 1.0 - (1.0 - a) * (1.0 - b) * (1.0 - c) * (1.0 - d);
+}
+
+vec4 screen(vec4 a, vec4 b, vec4 c, vec4 d, vec4 e)
+{
+	return 1.0 - (1.0 - a) * (1.0 - b) * (1.0 - c) * (1.0 - d) * (1.0 - e);
+}
+
 void main()
 {
 	vec4 tex1 = texture(uImage00, vTexCoord);
-	vec4 tex2 = texture(uTex_dm, vTexCoord);
-	vec4 texBlend = 1.0 - (1.0 - tex1) * (1.0 - tex2);
+	vec4 tex2 = texture(uImage01, vTexCoord);
+	vec4 tex3 = texture(uImage02, vTexCoord);
+	vec4 tex4 = texture(uImage03, vTexCoord);
+	vec4 texD = texture(uTex_dm, vTexCoord);
+
+	vec4 texBlend = screen(tex1, tex2, tex3, tex4, texD);
 	rtFragColor = texBlend;
 }

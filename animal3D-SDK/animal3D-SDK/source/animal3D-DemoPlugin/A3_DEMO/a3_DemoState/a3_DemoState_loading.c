@@ -889,7 +889,6 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 			frameWidth4, frameHeight4);
 
 		fbo = demoState->fbo_post_c16_8fr + i;
-		fbo = demoState->fbo_post_c16_8fr + i;
 		a3framebufferCreate(fbo, "fbo:3.5",
 			targets_post, colorType_post, a3fbo_depthDisable,
 			frameWidth8, frameHeight8);
