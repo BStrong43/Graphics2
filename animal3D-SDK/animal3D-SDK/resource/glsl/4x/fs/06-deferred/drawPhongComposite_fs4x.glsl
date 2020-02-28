@@ -44,7 +44,6 @@ layout (location = 5) out vec4 rtSpecularMapSample;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE YELLOW (and others)
 	rtFragColor = vec4(1.0, 1.0, 0.0, 1.0);
 	rtDiffuseMapSample = vec4(1.0, 0.0, 0.0, 1.0);
 	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
