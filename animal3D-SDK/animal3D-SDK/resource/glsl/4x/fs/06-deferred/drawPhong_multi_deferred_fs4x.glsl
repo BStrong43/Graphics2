@@ -45,12 +45,12 @@ in vbLightingData {
 	vec4 vBiasedClipCoord;
 };
 
-uniform sampler2D uImage00; // g-buffer depth texture (depth map)
-uniform sampler2D uImage01; // g-buffer position (vViewPos)
-uniform sampler2D uImage02; // g-buffer normal (vViewNormal)
-uniform sampler2D uImage03; // g-buffer texcoord (vTexcoord)
-uniform sampler2D uImage04; // g-buffer uTex_dm
-uniform sampler2D uImage05; // g-buffer uTex_sm
+uniform sampler2D uImage00;
+uniform sampler2D uImage01; 
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+uniform sampler2D uImage04;
+uniform sampler2D uImage05;
 
 uniform mat4 uPB_inv;
 
@@ -101,7 +101,7 @@ void main()
 		float diffuseCoeff = getDiffuseCoeff(surfaceNormal, lVecNorm);
 		dTotal += diffuseCoeff;
 		vec4 diffuse = diffuseCoeff * diffuseSample;
-		//Spec calc
+		//spec calc
 		float specularCoeff = getSpecularCoeff(surfaceNormal, lVecNorm, gbPos);
 		Total += specularCoeff;
 		vec4 specular = specularCoeff * specularSample;
@@ -125,10 +125,9 @@ float getDiffuseCoeff(vec4 surfaceNormal, vec4 lVecNorm)
 
 float getSpecularCoeff(vec4 surfaceNormal, vec4 lVecNorm, vec4 viewPosition)
 {
-
 	float specularCoeff = max(0.0, dot(normalize(viewPosition), vec4(reflect(lVecNorm, surfaceNormal).xyz, 1.0)));//Thanks OpenGL
 	
-	//fuck pow
+	//fuck pow crank that shit up
 	specularCoeff *= specularCoeff; 	specularCoeff *= specularCoeff; 
 	specularCoeff *= specularCoeff;		specularCoeff *= specularCoeff;
 	specularCoeff *= specularCoeff;		specularCoeff *= specularCoeff;

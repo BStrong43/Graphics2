@@ -684,13 +684,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 5.1a: uncomment deferred lighting composite program
-	/*
+	
 	// draw composited Phong shading model
 	currentDemoProg = demoState->prog_drawPhongComposite;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-composite");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
-	*/
+	
 
 
 	// activate a primitive for validation
