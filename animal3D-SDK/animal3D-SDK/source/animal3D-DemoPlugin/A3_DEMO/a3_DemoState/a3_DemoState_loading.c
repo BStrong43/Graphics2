@@ -426,6 +426,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				passAtlasTexcoord_transform_vs[1],
 				passLightingData_transform_bias_vs[1],
 				passBiasedClipCoord_transform_instanced_vs[1];
+			// Midterm- Fractals
+			a3_DemoStateShader
+				gemStoneManip_vs[1];
+
 
 			// fragment shaders
 			// base
@@ -461,6 +465,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_deferred_fs[1],
 				drawPhongVolume_fs[1],
 				drawPhongComposite_fs[1];
+			
+			//Midterm- Fractals
+			a3_DemoStateShader
+				mandelbrotFrac_fs[1],
+				juliaFrac_fs[1];
+			
 		};
 	} shaderList = {
 		{
@@ -484,6 +494,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-atlas-tex-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passAtlasTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passLightingData_transform_bias_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
+			//Midterm- Fractals
+			{ { { 0 },	"shdr-vs:gemstone-manip",		a3shader_vertex  ,	1,{ A3_DEMO_VS"midterm/gemstone_manip.glsl" } } },
 
 			// fs
 			// base
@@ -513,6 +525,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhong_multi_deferred_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongVolume_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongComposite_fs4x.glsl" } } },
+			//Midterm- Fractals
+			{ { { 0 },	"shdr-fs:julia-frac",		a3shader_fragment,	1,{ A3_DEMO_FS"midterm/juliaFrac_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:mandelbrot-frac",		a3shader_fragment,	1,{ A3_DEMO_FS"midterm/mandelbrotFrac_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -655,17 +670,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
 
 	// 06-deferred programs: 
-	// ****TO-DO: 
-	//	-> 2.1a: uncomment g-buffer program
-	
 	// draw lighting data as g-buffers
 	currentDemoProg = demoState->prog_drawLightingData;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lightingdata");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_bias_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLightingData_fs->shader);
-	
-	// ****TO-DO: 
-	//	-> 3.1a: uncomment deferred shading composite program
 	
 	// draw Phong shading deferred
 	currentDemoProg = demoState->prog_drawPhong_multi_deferred;
@@ -673,17 +682,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_deferred_fs->shader);
 	
-	// ****TO-DO: 
-	//	-> 4.1a: uncomment deferred light volume program
-	
 	// draw Phong light volume
 	currentDemoProg = demoState->prog_drawPhongVolume_instanced;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-volume-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passBiasedClipCoord_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongVolume_fs->shader);
-	
-	// ****TO-DO: 
-	//	-> 5.1a: uncomment deferred lighting composite program
 	
 	// draw composited Phong shading model
 	currentDemoProg = demoState->prog_drawPhongComposite;
@@ -691,7 +694,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
 	
-
+	//MIDTERM TO-DO
+	
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs

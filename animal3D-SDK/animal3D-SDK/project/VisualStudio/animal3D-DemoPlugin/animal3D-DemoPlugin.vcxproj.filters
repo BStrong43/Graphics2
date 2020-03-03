@@ -94,6 +94,12 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\06-deferred">
       <UniqueIdentifier>{d15f0b22-54ec-4cc8-a550-1d7cb625c0b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\Midterm">
+      <UniqueIdentifier>{e336a729-63ca-400f-b68f-ed9135e2c1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\Midterm">
+      <UniqueIdentifier>{621bc329-d0e9-4b71-8622-ca55ba52431f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -273,6 +279,15 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongComposite_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\midterm\juliaFrac_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\Midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\midterm\mandelbrotFrac_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\Midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\midterm\gemstone_manip.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\Midterm</Filter>
     </None>
   </ItemGroup>
 </Project>

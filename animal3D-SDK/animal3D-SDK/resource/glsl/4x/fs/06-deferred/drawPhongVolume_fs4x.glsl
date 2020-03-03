@@ -55,12 +55,10 @@ uniform ubPointLight {
 	uPointLight uLight[MAX_LIGHTS];
 };
 
-// (1) a3_Demo_Pipelines_idle-render.c (lines 605-610)
+
 uniform sampler2D uImage01; // g-buffer position (vViewPos)
 uniform sampler2D uImage02; // g-buffer normal (vViewNormal)
 uniform sampler2D uImage03; // g-buffer texcoord (vTexcoord)
-
-// (3)
 uniform mat4 uPB_inv;
 
 layout (location = 6) out vec4 rtDiffuseLight;
