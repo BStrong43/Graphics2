@@ -18,19 +18,11 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	drawPhong_multi_shadow_mrt_fs4x.glsl
-	Draw Phong shading model for multiple lights with MRT output and 
-		shadow mapping.
+	drawColorAttrib_fs4x.glsl
+	Draw color attribute passed from prior stage as varying.
 */
 
 #version 410
-
-// ****TO-DO: 
-//	0) copy existing Phong shader
-//	1) receive shadow coordinate
-//	2) perform perspective divide
-//	3) declare shadow map texture
-//	4) perform shadow test
 
 const int NUM_LIGHTS = 4;
 
@@ -49,11 +41,16 @@ uniform float uLightSz[NUM_LIGHTS];
 
 layout(location = 0) out vec4 rtFragColor;
 
+//Forward Declarations
+vec4 clampToGemFace(vec4 MVN);
+
 void main()
 {
 	vec4 texD = texture2D(uTex_dm, vTexCoord);
 	vec4 texS = texture2D(uTex_sm, vTexCoord);
-	vec4 surfaceNorm = normalize(vModelViewNorm);	
+
+	//Alter surface direction for lighting calculation
+	vec4 surfaceGem = clampToGemFace(vModelViewNorm);	
 
 	//Shadow Test
 	vec4 projScreen = vShadowCoord / vShadowCoord.w;
@@ -64,7 +61,7 @@ void main()
 	for (int i = 0; i < uLightCt; ++i) {
 		vec4 lightNorm = normalize(uLightPos[i] - viewPos);
 
-		float diffuseCoeff = max(0.0, dot(surfaceNorm, lightNorm));
+		float diffuseCoeff = max(0.0, dot(surfaceGem, lightNorm));
 		
 		if(fragIsShadowed)
 		{
@@ -72,7 +69,7 @@ void main()
 		}
 
 		vec4 lambert = diffuseCoeff * texD;
-		vec4 reflection = 2.0 * diffuseCoeff * surfaceNorm - lightNorm;
+		vec4 reflection = 2.0 * diffuseCoeff * surfaceGem - lightNorm;
 
 		float specularCoeff = max(0.0, dot(-normalize(viewPos), reflection));
 		
@@ -90,4 +87,16 @@ void main()
 	}
 	
 	rtFragColor = vec4(phong.xyz, 1.0);
+}
+
+vec4 clampToGemFace(vec4 MVN)
+{
+	vec4 surfaceNorm = normalize(MVN);
+	
+	//transform texcoord into grid coordinates
+	float gridX =  floor(vTexCoord.x * 10);
+	float gridY =  floor(vTexCoord.y * 10);
+	
+	
+	return surfaceNorm;
 }

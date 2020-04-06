@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\animal3D-SDK",
+    "\\animal3D-SDK\\animal3D-SDK",
+    "\\animal3D-SDK\\animal3D-SDK\\resource",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\02-shading",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\03-framebuffer",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\04-multipass"
+  ],
+  "SelectedNode": "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\04-multipass\\drawPhong_multi_shadow_mrt_fs4x.glsl",
+  "PreviewInSolutionExplorer": false
+}
