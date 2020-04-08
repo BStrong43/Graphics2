@@ -18,26 +18,41 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	passColor_transform_instanced_vs4x.glsl
-	Transform position attribute for instance and pass color attribute down 
-		the pipeline.
+	passColor_hierarchy_transform_instanced_vs4x.glsl
+	Transform position attribute for instance and pass color based on 
+		instance in a hierarchy.
 */
 
 #version 410
 
 #define MAX_INSTANCES 1024
+#define MAX_NODES 128
+#define MAX_COLORS 12
+
+// ****TO-DO: 
+//	1) declare structure to store single hierarchy node data
+//		(hint: look in the framework)
+//		(hint: char is not a thing here, but 1 int = 4 chars)
+//	2) declare uniform block to read list of hierarchy nodes
+//	3) select color from array based on some component of the 
+//		current hierarchy node being drawn
+//		(e.g. level in hierarchy from root node)
+//	4) copy selected color to outbound color
 
 layout (location = 0) in vec4 aPosition;
-layout (location = 3) in vec4 aColor;
 
 uniform ubTransformMVP {
 	mat4 uMVP[MAX_INSTANCES];
 };
+
+uniform vec4 uColor[MAX_COLORS];
 
 out vec4 vColor;
 
 void main()
 {
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
-	vColor = aColor;
+
+	// DUMMY OUTPUT: select first color
+	vColor = uColor[0];
 }
