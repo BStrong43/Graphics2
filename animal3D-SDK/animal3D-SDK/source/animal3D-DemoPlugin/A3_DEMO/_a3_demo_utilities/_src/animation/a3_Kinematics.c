@@ -52,7 +52,8 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 			if (parentIndex < 0) //If parent node = -1, node is root node
 			{//found root node
 				//Set node to correct local space according to parent
-				a3real4x4Product(hierarchyState->objectSpace[0].transform[i].m, hierarchyState->objectSpace[0].transform[parentIndex].m, hierarchyState->localSpace[0].transform[i].m);
+				a3real4x4Product(hierarchyState->objectSpace[0].transform[i].m, 
+					hierarchyState->objectSpace[0].transform[parentIndex].m, hierarchyState->localSpace[0].transform[i].m);
 			}
 			else
 			{//Not root node
@@ -83,14 +84,29 @@ extern inline a3i32 a3kinematicsSolveInversePartial(const a3_HierarchyState *hie
 	if (hierarchyState && hierarchyState->poseGroup &&
 		firstIndex < hierarchyState->poseGroup->hierarchy->numNodes && nodeCount)
 	{
-	//	a3i32 parentIndex;
+		a3i32 parentIndex;
 		a3ui32 i, end = firstIndex + nodeCount;
 		end = a3minimum(end, hierarchyState->poseGroup->hierarchy->numNodes);
 
 		for (i = firstIndex; i < end; ++i)
 		{
-			// ****TO-DO: implement inverse kinematics algorithm
+			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;
 
+			//Check if parent node exists
+			if (parentIndex < 0) //If parent node = -1, node is root node
+			{//found root node
+				//Set node to correct local space according to parent
+				//local-space node = inverse object-space parent * object-space node (thanks Dan)
+				a3real4x4Product(hierarchyState->localSpace[0].transform[i].m, 
+					a3real4x4Invert(hierarchyState->objectSpace[0].transform[parentIndex].m), hierarchyState->objectSpace[0].transform[i].m);
+				
+			}
+			else
+			{//Not root node
+				//Set object space to local space (for root its the same)
+				//local - space node = object - space node (thanks Dan)
+				a3real4x4SetReal4x4(hierarchyState->localSpace[0].transform[0].m, hierarchyState->objectSpace[0].transform[0].m);
+			}
 		}
 
 		// done, return number of nodes updated
