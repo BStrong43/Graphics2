@@ -517,11 +517,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 			// vs
 			// base
-			{ { { 0 },	"shdr-vs:passthru",					a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:passthru-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-col-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_instanced_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru",					a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-col-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_instanced_vs4x.glsl" } } },
 			// 02-shading
 			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
@@ -532,15 +532,15 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passLightingData_transform_bias_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
 			// 07-curves
-			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/e/passTangentBasis_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/passTangentBasis_transform_instanced_vs4x.glsl" } } },
 			// 07-keyframes
 			{ { { 0 },	"shdr-vs:pass-col-hierarchy-t-i",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-morph",		a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passTangentBasis_transform_instanced_morph_vs4x.glsl" } } },
 
 			// gs
 			// 07-curves
-			{ { { 0 },	"shdr-gs:draw-curve-segment",		a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/e/drawCurveSegment_gs4x.glsl" } } },
-			{ { { 0 },	"shdr-gs:draw-overlays-tb-wire",	a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/e/drawOverlays_tangents_wireframe_gs4x.glsl" } } },
+			{ { { 0 },	"shdr-gs:draw-curve-segment",		a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/drawCurveSegment_gs4x.glsl" } } },
+			{ { { 0 },	"shdr-gs:draw-overlays-tb-wire",	a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/drawOverlays_tangents_wireframe_gs4x.glsl" } } },
 
 			// fs
 			// base
@@ -1352,7 +1352,148 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 
 	// ****TO-DO: 
 	//	-> set up additional poses
+	//I dont know what i changed from this pose to the last
+	//Copied what was above and changed a few parameters
+	p = 1;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:root");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, 0.0, +3.7f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:spine_lower");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, -91.0f, -5.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, -0.1f, +0.1f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:spine_mid");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 1.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:spine_upper");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 1.0f, 0.0f, -5.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:neck");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:head");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, 0.0f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:clavicle");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, +90.0f, 0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.1f, +0.1f, 0.0f);
+	//	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
+	//	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	//	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
 
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulderblade_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, -0.1f, -0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulder_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, +30.0f, -10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:elbow_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 4.0f, 0.0f, +20.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:forearm_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +1.0f, 0.0f, 0.0f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:wrist_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, -10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +1.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:hand_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, 0.0f);
+
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulderblade_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.5f, -0.1f, -0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulder_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, -30.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.5f, 0.0f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:elbow_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, -20.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:forearm_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -1.0f, 0.0f, 0.0f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:wrist_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -1.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:hand_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.5f, 0.0f, 0.0f);
+
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:hip_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 1.0f, +90.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +1.0f, -0.1f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:knee_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, -20.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shin_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +1.0f, 0.0f, 0.0f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:ankle_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +90.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +1.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:foot_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:toe_r");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.5f, 0.0f, 0.0f);
+
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:hip_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, -90.0f, -10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -1.0f, -0.1f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:knee_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 1.0f, 0.0f, +20.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -2.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shin_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -1.0f, 0.0f, 0.0f);
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:ankle_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, -90.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -1.0f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:foot_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, -10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.5f, 0.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel:toe_l");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.5f, 0.0f, 0.0f);
 
 
 	// finally set up hierarchy states

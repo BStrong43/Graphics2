@@ -39,9 +39,18 @@
 //		(e.g. level in hierarchy from root node)
 //	4) copy selected color to outbound color
 
+//(1)
+struct nodeData
+{
+	int index;
+	int parentIndex;
+	int name[8];
+};
+
 layout (location = 0) in vec4 aPosition;
 
-uniform ubTransformMVP {
+uniform ubTransformMVP 
+{
 	mat4 uMVP[MAX_INSTANCES];
 };
 
@@ -49,10 +58,19 @@ uniform vec4 uColor[MAX_COLORS];
 
 out vec4 vColor;
 
+//(2)
+uniform ubNodeHierarchy
+{
+	nodeData nodeHierarchy[MAX_NODES];
+};
+
 void main()
 {
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
 
-	// DUMMY OUTPUT: select first color
-	vColor = uColor[0];
+	//(3)
+	int colorIndex = nodeHierarchy[gl_InstanceID].index;
+
+	//(4)
+	vColor = uColor[colorIndex];
 }

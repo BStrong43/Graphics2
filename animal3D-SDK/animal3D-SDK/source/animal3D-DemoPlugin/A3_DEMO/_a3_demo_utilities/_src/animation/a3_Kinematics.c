@@ -39,13 +39,13 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 	if (hierarchyState && hierarchyState->poseGroup && 
 		firstIndex < hierarchyState->poseGroup->hierarchy->numNodes && nodeCount)
 	{
-		//a3i32 parentIndex;
+		a3i32 parentIndex;
 		a3ui32 i, end = firstIndex + nodeCount;
 		end = a3minimum(end, hierarchyState->poseGroup->hierarchy->numNodes);
 
 		for (i = firstIndex; i < end; ++i)
 		{
-			/*
+			
 			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;
 
 			//Check if parent node exists
@@ -59,7 +59,7 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 				//Set object space to local space (for root its the same)
 				a3real4x4SetReal4x4(hierarchyState->objectSpace[0].transform[0].m, hierarchyState->localSpace[0].transform[0].m);
 			}
-			*/
+			
 		}
 
 		// done, return number of nodes updated
