@@ -6,11 +6,15 @@
     "\\animal3D-SDK\\animal3D-SDK\\resource",
     "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl",
     "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x",
-    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs",
-    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\02-shading",
-    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\03-framebuffer",
-    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\04-multipass"
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\vs",
+    "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\vs\\Final",
+    "\\animal3D-SDK\\animal3D-SDK\\source",
+    "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin",
+    "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin\\A3_DEMO",
+    "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin\\A3_DEMO\\a3_Demo_Shading",
+    "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin\\A3_DEMO\\_a3_demo_utilities",
+    "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin\\A3_DEMO\\_a3_demo_utilities\\animation"
   ],
-  "SelectedNode": "\\animal3D-SDK\\animal3D-SDK\\resource\\glsl\\4x\\fs\\04-multipass\\drawPhong_multi_shadow_mrt_fs4x.glsl",
+  "SelectedNode": "\\animal3D-SDK\\animal3D-SDK\\source\\animal3D-DemoPlugin\\A3_DEMO\\a3_Demo_Shading\\a3_Demo_Shading_idle-render.c",
   "PreviewInSolutionExplorer": false
 }

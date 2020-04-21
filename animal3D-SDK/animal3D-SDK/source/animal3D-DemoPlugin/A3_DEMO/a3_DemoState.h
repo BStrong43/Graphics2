@@ -92,7 +92,7 @@ extern "C"
 	//	more than enough memory to hold extra objects
 	enum a3_DemoState_ObjectMaxCount
 	{
-		demoStateMaxCount_sceneObject = 8,
+		demoStateMaxCount_sceneObject = 9,
 		demoStateMaxCount_cameraObject = 1,
 		demoStateMaxCount_lightObject = 4,
 		demoStateMaxCount_projector = 2,
@@ -247,6 +247,9 @@ extern "C"
 				a3_DemoSceneObject
 					morphObject[1],
 					skeletonObject[1];
+
+				a3_DemoSceneObject
+					mandelbulb[1];
 			};
 		};
 		union {
@@ -331,7 +334,9 @@ extern "C"
 					draw_torus[1],								// procedural torus
 					draw_teapot[1];								// can't not have a Utah teapot
 				a3_VertexDrawable
-					draw_teapot_morph[1];						// a MORPHING UTAH TEAPOT whaaaaaat???
+					draw_teapot_morph[1];						// a MORPHING UTAH TEAPOT whaaaaaat??? - Dan what is this? - Ben
+
+				//a3_VertexDrawable mandelbulb[1];
 			};
 		};
 
@@ -380,6 +385,8 @@ extern "C"
 					prog_drawColorizedHierarchy_instanced[1],	// draw instanced hierarchical model with colorization per instance
 					prog_drawPhong_multi_forward_mrt_morph[1],	// draw Phong with forward point lights and MRT with morphing
 					prog_drawOverlays_tb_wf_morph[1];			// draw overlays on morphed mesh
+				a3_DemoStateShaderProgram
+					prog_drawMandelbulb[1];
 			};
 		};
 
@@ -400,7 +407,8 @@ extern "C"
 					tex_stone_dm[1],
 					tex_ramp_dm[1],
 					tex_ramp_sm[1],
-					tex_checker[1];
+					tex_checker[1],
+					tex_MandelGradient[1];  //Gradient to color mandelbulb
 			};
 		};
 

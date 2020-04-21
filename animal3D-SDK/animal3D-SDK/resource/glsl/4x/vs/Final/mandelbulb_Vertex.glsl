@@ -25,9 +25,11 @@
 
 #version 410
 
-#define MAX_INSTANCES 1024
+#define MAX_ITERATIONS 1024
 
 layout (location = 0) in vec4 aPosition;
+out vec4 fracVector;
+out float fracIterations;
 
 void main()
 {

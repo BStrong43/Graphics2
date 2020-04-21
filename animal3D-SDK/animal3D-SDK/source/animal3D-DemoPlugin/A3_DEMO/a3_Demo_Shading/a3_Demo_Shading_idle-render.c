@@ -167,6 +167,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		demoState->draw_cylinder,
 		demoState->draw_torus,
 		demoState->draw_teapot,
+		demoState->mandelbulb
 	};
 
 	// temp texture pointers
@@ -176,6 +177,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		demoState->tex_stone_dm,
 		demoState->tex_mars_dm,
 		demoState->tex_checker,
+		demoState->tex_MandelGradient
 	};
 	const a3_Texture* texture_sm[] = {
 		demoState->tex_stone_dm,
@@ -193,12 +195,14 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 			demoState->prog_drawLambert_multi,
 			demoState->prog_drawPhong_multi,
 			demoState->prog_drawNonphoto_multi,
+			demoState->prog_drawMandelbulb
 		}, {
 			demoState->prog_drawColorUnif,
 			demoState->prog_drawTexture_mrt,
 			demoState->prog_drawLambert_multi_mrt,
 			demoState->prog_drawPhong_multi_mrt,
 			demoState->prog_drawNonphoto_multi_mrt,
+			demoState->prog_drawMandelbulb
 		},
 	};
 

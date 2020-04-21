@@ -115,6 +115,12 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-keyframes">
       <UniqueIdentifier>{b74bbca8-c4f3-4b5d-b29b-8ebc21cda84d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\Fractals">
+      <UniqueIdentifier>{92cdfe32-12f5-472f-be6f-6dd7ec5bb771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\Fractals">
+      <UniqueIdentifier>{a8a32e87-405f-485e-aea4-2bfaa6008bbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">

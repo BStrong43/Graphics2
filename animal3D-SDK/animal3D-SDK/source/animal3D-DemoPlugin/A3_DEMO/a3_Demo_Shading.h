@@ -60,6 +60,7 @@ extern "C"
 		shading_renderLambert,		// Lambert shading
 		shading_renderPhong,		// Phong shading
 		shading_renderNonphoto,		// nonphotorealistic shading
+		shading_Mandelbulb,
 
 		shading_render_max
 	};

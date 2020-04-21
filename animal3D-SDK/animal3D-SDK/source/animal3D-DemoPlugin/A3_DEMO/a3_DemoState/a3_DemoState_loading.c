@@ -464,6 +464,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_transform_instanced_morph_vs[1];
+			//Final-Fractals
+			a3_DemoStateShader
+				mandelbuld_Vertex[1];
 
 			// geometry shaders
 			// 07-curves
@@ -508,6 +511,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
+			//Final-Fractals
+			a3_DemoStateShader
+				mandelbulb_Color[1];
 		};
 	} shaderList = {
 		{
@@ -536,6 +542,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-keyframes
 			{ { { 0 },	"shdr-vs:pass-col-hierarchy-t-i",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-morph",		a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passTangentBasis_transform_instanced_morph_vs4x.glsl" } } },
+			
+			//Fractals
+			{ { { 0 },	"shdr-vs:mandelbulb_Vertex",		a3shader_vertex  ,	1,{ A3_DEMO_VS"Final/mandelbulb_Vertex.glsl" } } },
 
 			// gs
 			// 07-curves
@@ -572,11 +581,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+			
+			//Fractals
+			{ { { 0 },	"shdr-fs:mandelbulb_Color" ,    	a3shader_fragment,	1,{ A3_DEMO_FS"Final/mandelbulb_Color.glsl" } } },
 		}
 	};
+	
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
 	const a3ui32 numUniqueShaders = sizeof(shaderList) / sizeof(a3_DemoStateShader);
-
 
 	printf("\n\n---------------- LOAD SHADERS STARTED  ---------------- \n");
 
@@ -772,6 +784,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passColor_hierarchy_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	//Fractals
+	currentDemoProg = demoState->prog_drawMandelbulb;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Mandelbulb");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.mandelbuld_Vertex->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.mandelbulb_Color->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -932,6 +949,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampDM[1];
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
+			a3_DemoStateTexture texGradient[1];
 		};
 	} textureList = {
 		{
@@ -947,6 +965,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
+			{ demoState->tex_MandelGradient,"tex:gradient",     "../../../../resource/tex/sprite/gradient.png"}
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);
