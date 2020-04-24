@@ -336,7 +336,7 @@ extern "C"
 				a3_VertexDrawable
 					draw_teapot_morph[1];						// a MORPHING UTAH TEAPOT whaaaaaat??? - Dan what is this? - Ben
 
-				//a3_VertexDrawable mandelbulb[1];
+				a3_VertexDrawable draw_mandelbulb[1];
 			};
 		};
 

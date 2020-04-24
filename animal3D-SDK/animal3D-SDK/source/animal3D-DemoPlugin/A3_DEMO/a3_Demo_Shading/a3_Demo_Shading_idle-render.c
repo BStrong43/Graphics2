@@ -167,7 +167,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		demoState->draw_cylinder,
 		demoState->draw_torus,
 		demoState->draw_teapot,
-		demoState->mandelbulb
+		demoState->draw_mandelbulb
 	};
 
 	// temp texture pointers
