@@ -2,10 +2,11 @@
 {
     Properties
     {
-        _MainTex	("Texture", 2D) = "white" {}
-		_MandelColor("Mandelbrot Color", Color) = (0,0,0,1)
-		_JulaiCoord ("Julia Coordinate", Vector) = (.9, .4, 0,0)
-		_TimeSlide  ("Time Slider", Range(0,5)) = 0
+        _MainTex	   ("Texture", 2D) = "white" {}
+		_MandelColor   ("Mandelbrot Color", Color) = (0,0,0,1)
+		_JulaiCoord    ("Julia Coordinate", Vector) = (.9, .4, 0,0)
+		_TimeSlide     ("Time Slider", Range(0,5)) = 0
+		_NumIterations ("Iterations", int) = 512
 		
     }
     SubShader
